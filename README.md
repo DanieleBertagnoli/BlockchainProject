@@ -14,7 +14,7 @@ DSTs (Dragon Sphere Tokens) play a crucial role in our crowdfunding DApp. Users 
 Users can belong to three diffent groups:
 
 - Normal User: user that can create/donate/report campaigns.
-- SSJ-User: user that holds enough DSTs to become part of the SSJ (Super Saiyan) set. A subset of nodes that can approve or deny a campaign. They will be rewarded with a small fee once that the campaign ends (if has not been reported and banned).
+- SSJ-User: user that holds enough DSTs to become part of the SSJ (Super Saiyan) set. A subset of nodes that can approve or deny a campaign. They will be rewarded with a small fee once that the campaign ends (if has not been reported and banned). The small fee is taken from the assurance paid by the campaign owner (see next section).
 
 When a user wants to report a campaign, he has to spend a DST. If the reported campaign is banned, then all the reporters will be rewarded with 2 DSTs and a small fee.
 
