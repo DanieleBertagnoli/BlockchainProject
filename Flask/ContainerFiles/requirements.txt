@@ -1,0 +1,5 @@
+flask
+flask-bcrypt
+flask-login
+mysqlclient
+mysql-connector-python

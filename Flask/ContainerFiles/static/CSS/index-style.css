@@ -1,0 +1,146 @@
+@import "https://unpkg.com/open-props";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+:root
+{
+    --bg-color: #0a3b2d;
+    --text-color: #fff;
+    --main-color: #00ff73;
+    --secondary-color: #1b6e57;
+}
+
+h1, h2, h3, h4, a, a:hover, p
+{ color: white; }
+
+/* Main Styling */
+html body *
+{ 
+    font-family: 'Poppins', sans-serif; 
+    outline: none;
+    text-decoration: none;
+    scroll-behavior: smooth;
+}
+
+body
+{
+    background: var(--bg-color);
+    background-position: center;
+    background-size: cover;
+    overflow-x: hidden;
+    overflow: scroll;
+}
+
+/* Background */
+
+.background
+{ 
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    margin-bottom: 5rem;
+}
+
+/* Navbar */
+
+.header
+{
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 5px;
+    display: flex;
+    background-color: rgb(24, 24, 24);
+    z-index: 2;
+}
+
+.menu
+{ 
+    width: 100%; 
+    z-index: 2;
+    transition: all 1s cubic-bezier(.215, .61, .355, 1);
+    display: flex;
+}
+
+.right
+{
+    margin-left: auto;
+    margin-right: 0;
+}
+
+ul
+{
+    padding: 0;
+    margin: 0;
+}
+
+.menu li
+{ 
+    display: inline-block; 
+    border: 1px solid white;
+    border-radius: 10px;
+}
+
+.menu li a 
+{ 
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 10px;
+}
+
+.left li
+{ margin-left: 1rem; }
+
+.right li
+{ margin-right: 1rem; }
+
+.hamburger
+{ 
+    display: none; 
+    z-index: 3;
+}
+
+/* Main Section */
+
+.main
+{
+    background: linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.9)), url('../Images/background.png') no-repeat;
+    background-position: 10%;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+}
+
+.main-text
+{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin-left: 8rem;
+}
+
+.main-text h1
+{ 
+    font-size: 4.2rem;
+    font-weight: 800;
+    color: white; 
+}
+
+.main-text p
+{ 
+    width: 80%;
+    color: white; 
+    font-size: 20px;
+}
+
+.main-text h2
+{
+    color: transparent;
+    font-size: 2.5rem;
+    -webkit-text-stroke: 2px var(--main-color);
+    margin-bottom: 2rem;
+}
