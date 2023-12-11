@@ -27,6 +27,8 @@ Users have the flexibility to either initiate their fundraising campaigns or con
 - What they will do with the donated ETH
 - Rewards for the donors and the time needed to deliver them (Optional)
 
+When a user donates to a campaign, the money is transferred to the contract account. The donations are sent to the campaign owner once the campaign ends. This way, if the campaign is banned before the money is transferred to the owner, the donors can be refunded (fees excluded).
+
 Once the pot has been filled or the time limit has been reached, and if some rewards have been specified during the campaign creation, the user has to deliver them within the specified time. After the delivery, the donations will be transferred to their account.
 
 To reduce the probability of scams, the campaign owner has to deposit 5% of the requested ETH as assurance. This bail is used to reward the SSJ-Users that have approved the campaign. In detail, when a campaign ends, those SSJ-Users will receive a fraction of that bail based on the success of the campaign. The following example should clarify the mechanism:
@@ -37,7 +39,7 @@ To reduce the probability of scams, the campaign owner has to deposit 5% of the 
 
 A possible problem arises from the fact that the SSJ-Users are not risking anything, hence they could approve all the campaigns without being punished for that misbehavior. To address this problem, when a user has enough DSTs to become part of the SSJ set, they have to put 0.1 ETH (approximately 200€) as stake into the platform. When they achieve rewards from the platform, those ETH gained are added to their "vault," but when they approve a campaign with less than a 5% success rate, they get penalized by withdrawing ETH from the vault. The SSJ-User can freely decide when they want to exit from the SSJ-User set by withdrawing the vault value.
 
-When a user donates to a campaign, the money is transferred to the contract account. The donations are sent to the campaign owner once the campaign ends. This way, if the campaign is banned before the money is transferred to the owner, the donors can be refunded (fees excluded).
+To ensure that SSJ-Users are active on the platform and votes for pending campaigns, they have up to 7 days to express a vote for a pending campaign, otherwise their DSTs are slashed.
 
 ### 4. User Combat Level
 Each user is assigned a combat level ranging from 1 to 9000, which determines the maximum amount of ETH they can request in each deployed campaign. Users can increase or decrease their level based on the number of DSTs. The more a user donates and provides accurate reports, the higher their level becomes, allowing them to request more in their campaigns.
