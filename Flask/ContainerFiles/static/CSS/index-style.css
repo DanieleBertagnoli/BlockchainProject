@@ -9,8 +9,8 @@
     --secondary-color: #1b6e57;
 }
 
-h1, h2, h3, h4, a, a:hover, p
-{ color: white; }
+h1, h2, h3, h4, a, a:hover, p, button
+{ color: white; margin: 0; padding: 0; }
 
 /* Main Styling */
 html body *
@@ -28,6 +28,13 @@ body
     background-size: cover;
     overflow-x: hidden;
     overflow: scroll;
+}
+
+.animated
+{
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s, transform 1s;
 }
 
 /* Background */
@@ -52,7 +59,7 @@ body
     padding: 5px;
     display: flex;
     background-color: rgb(24, 24, 24);
-    z-index: 2;
+    z-index: 3;
 }
 
 .menu
@@ -112,14 +119,15 @@ ul
     display: flex;
     flex-direction: column;
     height: 100vh;
-    justify-content: center;
 }
 
 .main-text
 {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     width: 70%;
+    height: 100%;
     margin-left: 8rem;
 }
 
@@ -143,4 +151,207 @@ ul
     font-size: 2.5rem;
     -webkit-text-stroke: 2px var(--main-color);
     margin-bottom: 2rem;
+}
+
+.buttons
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    margin-bottom: 4rem;
+}
+
+.btn-wrapper
+{ 
+    display: flex;
+    margin: .7rem 2rem; 
+    width: fit-content;
+    height: fit-content;
+}
+
+.btn-custom
+{
+    display: flex;
+    width: fit-content;
+    text-decoration: none;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,.65);
+    border: 2px solid var(--main-color);
+    text-align: center;
+    position: relative;
+    transition: all .35s;
+    margin: 0 !important;
+    padding: 7px 14px;
+    overflow-wrap: normal;
+
+    font-size: 1.3rem;
+}
+
+.btn-custom span
+{
+    width: 100%;
+    z-index: 2;
+}
+
+.btn-custom i
+{ 
+    width: fit-content;
+    align-self: center;
+    z-index: 2;
+    margin-left: 1rem;
+}
+
+.btn-custom::after
+{
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: var(--main-color);
+    transition: all .35s;
+    border-radius: 4px;
+}
+
+.btn-custom:hover
+{
+    color: black; 
+    font-weight: 500;
+    font-size: 1.6rem;
+}
+
+.btn-custom:hover::after
+{ width: 100%; }
+
+.section-title
+{
+    width: 100%;
+    text-align: center;
+    font-weight: 700;
+    font-size: 3rem;
+    margin: 3rem 0;
+}
+
+.sub-section-title
+{
+    width: 100%;
+    text-align: center;
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 3rem 0;
+}
+
+.info .sub-section-title
+{ text-align: start; }
+
+.info
+{ margin: 2rem 4rem; }
+
+.single-info
+{
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.info-description
+{ 
+    width: 50%; 
+    height: fit-content;
+    margin-left: 1rem;
+}
+
+.single-info img, .ssj-description img
+{ height: 370px; }
+
+.single-info img
+{ 
+    margin-right: 1rem; 
+    margin-left: auto;
+}
+
+.ssj-set
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: fit-content;
+    margin: 2rem 4rem;
+}
+
+.ssj-set p 
+{ font-size: 20px; }
+
+.ssj-description
+{
+    display: flex;
+    flex-direction: row;
+    width: 100%;    
+    align-items: center;
+    justify-content: center;
+}
+
+.ssj-description p
+{
+    width: 60%; 
+    padding-right: 5rem;
+}
+
+.ssj-description-container
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+}
+
+.ssj-description-container p
+{
+    width: 100%;
+    padding: 0; 
+}
+
+.card-container
+{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ssj-card
+{
+    display: flex;
+    flex-direction: column;
+    width: 270px;
+    border-radius: 20px;
+    padding: 30px;
+    margin: 1rem;
+    
+    -webkit-box-shadow: 0px 0px 50px 3px rgba(8, 8, 8, 0.9);
+    -moz-box-shadow: 0px 0px 50px 3px rgba(8, 8, 8, 0.9);
+    box-shadow: 0px 0px 50px 3px rgba(8, 8, 8, 0.9);
+    background-color: rgba(8, 8, 8, 0.9);
+}
+
+.ssj-card h3
+{
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.ssj-card p
+{ font-size: 14px; }
+
+.white-line
+{ 
+    width: 80%; 
+    height: 4px;
+    background-color: white;
+    margin: 3rem auto;
 }

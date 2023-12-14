@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin, login_user, current_user, login_required, logout_user, LoginManager
 import secrets
+import datetime
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)  # Generates a random 32-character hexadecimal string
@@ -22,11 +23,13 @@ login_manager = LoginManager(app)
 login_manager.login_view = '/login-page'  # Specify the endpoint for the login page
 
 class User(UserMixin):
-    def __init__(self, email, username, password_hash):
+    def __init__(self, email, username, password_hash, birthday, metamask_address):
         self.id = email  # Use email as the user ID
         self.email = email
         self.username = username
         self.password_hash = password_hash
+        self.birthday = birthday
+        self.metamask_address = metamask_address
 
 
 @login_manager.user_loader
@@ -38,7 +41,7 @@ def load_user(email):
     db_cursor.close()
 
     if user_data:
-        return User(user_data['email'], user_data['username'], user_data['password_hash'])
+        return User(user_data['email'], user_data['username'], user_data['password_hash'], user_data['birthday'], user_data['metamask_address'])
     return None
 
 
@@ -58,9 +61,11 @@ def signup():
     username = request.form.get('username')
     password = request.form.get('password')
     password_confirm = request.form.get('password-confirm')
+    birthday = request.form.get('birthday')
+    metamask_address = request.form.get('metamask-address')
 
     # Validate the form data
-    if not email or not password or not password_confirm or not username:
+    if not email or not password or not password_confirm or not username or not metamask_address or not birthday:
         error_msg = 'All fields are required.'
         return render_template('signup-page.html', error_msg=error_msg)
 
@@ -81,10 +86,13 @@ def signup():
 
     # Hash the password
     password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    # Convert the birthday to a MySQL-compatible date format
+    birthday = datetime.datetime.strptime(birthday, '%Y-%m-%d').date().isoformat()
+
 
     # Insert user into the database
     db_cursor = mysql_connection.cursor(dictionary=True)
-    db_cursor.execute("INSERT INTO users (email, username, password_hash) VALUES (%s, %s, %s)", (email, username, password_hash))
+    db_cursor.execute("INSERT INTO users (email, username, password_hash, birthday, metamask_address) VALUES (%s, %s, %s, %s, %s)", (email, username, password_hash, birthday, metamask_address))
     mysql_connection.commit()
     db_cursor.close()
 
@@ -116,7 +124,7 @@ def login():
 
     if user and bcrypt.check_password_hash(user['password_hash'], password):
         # Successful login
-        login_user(User(user['email'], user['username'], user['password_hash']))
+        login_user(User(user['email'], user['username'], user['password_hash'], user['birthday'], user['metamask_address']))
         return redirect('/home-page')
     else:
         # Invalid credentials
@@ -127,14 +135,18 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return render_template('index.html')
+    return redirect('/')
 
 
 @app.route('/home-page')
 @login_required
 def home_page():
-    print(f'username: {current_user.username}')
     return render_template('home-page.html', username=current_user.username)
+
+@app.route('/profile-page')
+@login_required
+def profile_page():
+    return render_template('profile-page.html', username=current_user.username, email=current_user.email, date_of_birth=current_user.birthday, metamask_address=current_user.metamask_address)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=80)

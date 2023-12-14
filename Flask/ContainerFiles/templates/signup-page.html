@@ -21,6 +21,9 @@
         <!-- Link to the script -->
         <script src="{{ url_for('static', filename='JS/login-signup-script.js') }}"></script>  
 
+        <!-- Werb3 -->
+        <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
+
         <!-- Link for the Logo -->
         <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='Images/favicon.ico') }}">
 
@@ -77,10 +80,18 @@
 
                 <h1>SIGNUP</h1>
 
-                <input type="email" name="email" id="email" placeholder="Email">
-                <input type="text" name="username" id="username" placeholder="Username">
-                <input type="password" name="password" id="password" placeholder="Password">
-                <input type="password" name="password-confirm" id="password-confirm" placeholder="Confirm Password">
+                <div class="form-input-group">
+                    <input type="email" name="email" id="email" placeholder="Email">
+                    <input type="text" name="username" id="username" placeholder="Username">=
+                </div>
+                
+                <div class="form-input-group">
+                    <input type="password" name="password" id="password" placeholder="Password">
+                    <input type="password" name="password-confirm" id="password-confirm" placeholder="Confirm Password">
+                </div>
+
+                <input type="text" name="metamask-address" id="metamask-address" placeholder="MetaMask Address">
+                <input type="date" name="birthday" id="birthday" placeholder="Date of Birth">
 
                 <input type="submit" name="submit" value="Signup">
 

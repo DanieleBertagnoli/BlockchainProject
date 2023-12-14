@@ -15,10 +15,24 @@ function checkForm(formType)
     {
         var passwordConfirm = $('#password-confirm').val();
         var username = $('#username').val();
+        var metamaskAddress = $('#metamask-address').val();
+        var birthday = $('#birthday').val();
 
         if (!username) 
         {
             createErrorMsg('Please enter your username.');
+            return false; // Prevent the form submission
+        }
+
+        if(!birthday)
+        {
+            createErrorMsg('Please enter your date of birth.');
+            return false; // Prevent the form submission
+        }
+
+        if(!metamaskAddress)
+        {
+            createErrorMsg('Please enter your MetaMask address.');
             return false; // Prevent the form submission
         }
 
@@ -33,6 +47,12 @@ function checkForm(formType)
             createErrorMsg('Passwords do not match.');
             return false; // Prevent the form submission
         }
+
+        if(!checkMetamaskAddress(metamaskAddress))
+        {
+            createErrorMsg('Please enter a valid Metamask address (including 0x).');
+            return false; // Prevent the form submission
+        }
     }
     else if(formType == 'login')
     {
@@ -45,7 +65,7 @@ function checkForm(formType)
     else
     { return false; }
 
-    return true;
+    //return true;
 }
 
 function createErrorMsg(errorMsg) 
@@ -69,4 +89,13 @@ function createErrorMsg(errorMsg)
     }  
     else // If it already exists, update the content
     { errorAlert.find('span').text(errorMsg); }
+}
+
+function checkMetamaskAddress(address) 
+{
+    // Use Web3 to check if the address is valid
+    if (web3.utils.isAddress(address)) 
+    { return true; } 
+    else 
+    { return false; }
 }

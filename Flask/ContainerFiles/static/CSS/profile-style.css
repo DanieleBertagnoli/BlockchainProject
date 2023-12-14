@@ -1,0 +1,38 @@
+html
+{ min-height: 100vh; }
+
+body
+{ min-height: 100vh; }
+
+.main
+{
+    display: flex;
+    padding: 8rem 0;
+    height: fit-content;
+    background: none;
+}
+
+.profile
+{
+    display: flex;
+    flex-direction: column;
+    margin: 0 4rem;
+    padding: 0 2rem;
+
+    border-radius: 20px;
+    border: 1px solid red;
+}
+
+.profile h1
+{
+    margin: 2rem 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 3.5rem;
+}
+
+.profile span
+{ font-weight: 600; }
+
+.profile img
+{ height: 35px; }
