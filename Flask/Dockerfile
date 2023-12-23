@@ -18,4 +18,3 @@ RUN pip3 install -r requirements.txt
 COPY ./ContainerFiles/entrypoint.sh entrypoint.sh
 
 EXPOSE 80
- 

@@ -11,8 +11,6 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
-    networks:
-      - dragonblock_network
     volumes:
       - ./MySQL/init-script.sql:/docker-entrypoint-initdb.d/init-script.sql
       - ./MySQL/mysql_data:/var/lib/mysql
@@ -25,13 +23,17 @@ services:
     command: /bin/sh /ContainerFiles/entrypoint.sh
     ports:
       - "80:80"
-    networks:
-      - dragonblock_network
     depends_on:
       - dragonblock_mysql
     volumes:
       - ./Flask/ContainerFiles:/ContainerFiles
 
-networks:
-  dragonblock_network:
-    driver: bridge
+  dragonblock_truffle:
+    build:
+      context: ./Truffle
+      dockerfile: Dockerfile
+    container_name: DragonBlockTruffle 
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./Truffle/ContainerFiles:/ContainerFiles/

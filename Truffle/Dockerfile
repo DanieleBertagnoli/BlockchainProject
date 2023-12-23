@@ -1,4 +1,4 @@
-FROM node:18-bullseye-slim as base
+FROM node:18-bullseye-slim
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
@@ -11,3 +11,8 @@ RUN apt-get update && \
 RUN npm install --global --quiet npm truffle
 
 EXPOSE 8545
+
+COPY ./ContainerFiles /ContainerFiles
+WORKDIR /ContainerFiles/
+
+CMD truffle migrate 

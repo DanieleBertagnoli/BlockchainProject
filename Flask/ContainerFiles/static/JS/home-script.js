@@ -1,3 +1,5 @@
+const web3 = new Web3(Web3.givenProvider || "ws://172.17.0.1:7545");
+
 $(document).ready(function() 
 {
   $(window).on("scroll", function() 
@@ -18,6 +20,8 @@ $(document).ready(function()
       }
     });
   });
+
+  callContract();
 });
 
 function loadMoreCampaigns() 
@@ -66,4 +70,57 @@ function updateShowLessButton()
     { $('#btn-less').attr('hidden', true); } 
     else // Show the "Show Less" button
     { $('#btn-less').removeAttr('hidden'); }
+}
+
+
+
+// Specify the address of your deployed smart contract
+const contractAddress = '0xc954D8E16E25d2FBc183E8eD1c3D0A5E0D1dA30D'; // Replace with the actual address
+// Specify the ABI (Application Binary Interface) of your smart contract
+const contractABI = [
+  {
+    "inputs": [],
+    "name": "greet",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  }
+];
+
+// Create a contract instance
+const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+function callContract() {
+  // Check if MetaMask is installed
+  if (window.ethereum) {
+    // Use MetaMask provider
+    window.web3 = new Web3(window.ethereum);
+
+    // Check if the user has granted account access
+    window.ethereum.enable()
+      .then(() => {
+        console.log('Connected to MetaMask');
+
+        // Call the greet function
+        contract.methods.greet().call()
+          .then(result => {
+            console.log('Greeting:', result);
+          })
+          .catch(error => {
+            console.error('Error calling greet function:', error);
+          });
+      })
+      .catch(error => {
+        console.error('User denied account access or there was an error:', error);
+      });
+  } else {
+    console.error('MetaMask is not installed. Please install MetaMask to use this DApp.');
+  }
 }
