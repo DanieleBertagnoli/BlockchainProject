@@ -1,5 +1,5 @@
-const HelloWorld = artifacts.require("HelloWorld");
+const DragonBlock = artifacts.require("DragonBlock");
 
 module.exports = function (deployer){
-    deployer.deploy(HelloWorld);
+    deployer.deploy(DragonBlock);
 }
