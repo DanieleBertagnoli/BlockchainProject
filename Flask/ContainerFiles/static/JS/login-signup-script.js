@@ -15,7 +15,6 @@ function checkForm(formType)
     {
         var passwordConfirm = $('#password-confirm').val();
         var username = $('#username').val();
-        var metamaskAddress = $('#metamask-address').val();
         var birthday = $('#birthday').val();
 
         if (!username) 
@@ -30,9 +29,12 @@ function checkForm(formType)
             return false; // Prevent the form submission
         }
 
-        if(!metamaskAddress)
-        {
-            createErrorMsg('Please enter your MetaMask address.');
+        var today = new Date();
+        var birthDate = new Date(birthday);
+        var age = today.getFullYear() - birthDate.getFullYear();
+
+        if (age < 18) {
+            createErrorMsg('You must be at least 18 years old.');
             return false; // Prevent the form submission
         }
 
@@ -47,12 +49,6 @@ function checkForm(formType)
             createErrorMsg('Passwords do not match.');
             return false; // Prevent the form submission
         }
-
-        if(!checkMetamaskAddress(metamaskAddress))
-        {
-            createErrorMsg('Please enter a valid Metamask address (including 0x).');
-            return false; // Prevent the form submission
-        }
     }
     else if(formType == 'login')
     {
@@ -64,8 +60,6 @@ function checkForm(formType)
     }
     else
     { return false; }
-
-    //return true;
 }
 
 function createErrorMsg(errorMsg) 

@@ -60,8 +60,31 @@
     margin-bottom: 1rem;
 }
 
-.campaign-title
+.single-campaign h2
 {
-    width: 100%;
+    width: fit-content;
     height: fit-content;
+}
+
+
+.campaign-header
+{
+    display: flex;
+    justify-content: space-between;
+}
+
+.campaign-description
+{ margin: 1rem 0; }
+
+.donated-wei
+{ margin: 1rem 0; }
+
+.campaigns-container
+{
+    display: flex;
+    width: 90%;
+    max-height: 600px;
+    flex-direction: column;
+    overflow-y: scroll;
+    align-items: center;
 }

@@ -9,7 +9,7 @@
     --secondary-color: #1b6e57;
 }
 
-h1, h2, h3, h4, a, a:hover, p, button
+h1, h2, h3, h4, a, p, button
 { color: white; margin: 0; padding: 0; }
 
 /* Main Styling */

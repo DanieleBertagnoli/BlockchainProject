@@ -19,10 +19,12 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
+        <!-- Load Web3 -->
         <script src="https://cdn.jsdelivr.net/npm/web3@1.5.0/dist/web3.min.js"></script>
 
         <!-- Link to the script -->
-        <script type="module" src="{{ url_for('static', filename='JS/home-script.js') }}"></script>  
+        <script type="module" src="{{ url_for('static', filename='JS/blockchain-integration-script.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='JS/home-script.js') }}"></script>
 
         <!-- Link for the Logo -->
         <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='Images/favicon.ico') }}">
@@ -81,9 +83,15 @@
         </div>
 
         <div class="dst">
-            <h1>ACCOUNT DST BALANCE: user_dst </h1>
+            <h1>ACCOUNT DST BALANCE: <span id="dst-amount">user_dst</span> </h1>
             <img src="{{ url_for('static', filename='Images/dst.png') }}" alt="DST">
             <div id="campaigns"></div>
+
+            <div class="btn-wrapper">
+                <a class="btn-custom" id="become-ssj" onclick="becomeSSJ();"><span>Become a SSJ</span><i class="bi bi-person-up"></i></a>
+            </div>
+
+            <h2>Role: <span id="user-role">user_role</span></h2>
         </div>
 
         <div class="white-line"></div>
@@ -92,56 +100,14 @@
 
             <h1 class="section-title">LIST OF ACTIVE CAMPAIGNS <img src="{{ url_for('static', filename='Images/donate.png') }}" alt="Active Campaigns"></h1>
 
-            <div class="single-campaign">
-            
-                <h2 class="campaign-title">Campaign Title</h2>
-                <div class="campaing-description">
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem excepturi iusto eaque, incidunt ea, natus harum atque sapiente exercitationem tenetur cum dolorem nisi voluptatibus vel rem dicta cumque minus laboriosam?</p>
-                </div>
-
-                <div class="buttons buttons-campaigns">
-
-                    <div class="btn-wrapper">
-                        <button class="btn-custom"><span>Donate</span><i class="bi bi-piggy-bank-fill"></i></button>
-                    </div>
-
-                    <div class="btn-wrapper">
-                        <button class="btn-custom btn-report"><span>Report</span><i class="bi bi-flag-fill"></i></button>
-                    </div>
-
-                </div>
-            
+            <div class="btn-wrapper">
+                <a class="btn-custom" href="/create-campaign"><span>Create Campaign</span><i class="bi bi-person-up"></i></a>
             </div>
 
-            <div class="single-campaign">
-            
-                <h2 class="campaign-title">Campaign Title</h2>
-                <div class="campaing-description">
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem excepturi iusto eaque, incidunt ea, natus harum atque sapiente exercitationem tenetur cum dolorem nisi voluptatibus vel rem dicta cumque minus laboriosam?</p>
-                </div>
+            <div class="campaigns-container">
 
-                <div class="buttons buttons-campaigns">
-
-                    <div class="btn-wrapper">
-                        <button class="btn-custom"><span>Donate</span><i class="bi bi-piggy-bank-fill"></i></button>
-                    </div>
-
-                    <div class="btn-wrapper">
-                        <button class="btn-custom btn-report"><span>Report</span><i class="bi bi-flag-fill"></i></button>
-                    </div>
-
-                </div>
-            
-            </div>
-
-            <div id="btns-more-less" class="buttons buttons-campaigns">
-
-                <div class="btn-wrapper">
-                    <button id="btn-more" class="btn-custom" onclick="loadMoreCampaigns()"><span>Show More</span><i class="bi bi-plus-circle"></i></button>
-                </div>
-
-                <div id="btn-less" class="btn-wrapper" hidden>
-                    <button class="btn-custom btn-report" onclick="loadLessCampaigns()"><span>Show Less</span><i class="bi bi-dash-circle"></i></button>
+                <div class="btn-wrapper" id="btn-more">
+                    <button class="btn-custom" onclick="loadMoreCampaigns()"><span>Show More</span><i class="bi bi-plus-circle"></i></button>
                 </div>
 
             </div>

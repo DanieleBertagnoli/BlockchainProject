@@ -29,6 +29,8 @@ contract DragonBlock {
         uint16 weekDuration;    // Duration of the campaign in weeks
     }
 
+    event CampaignCreation(uint256 campaignId);
+
     // Array to store all campaigns
     Campaign[] public campaigns;
 
@@ -36,7 +38,7 @@ contract DragonBlock {
     mapping(address => uint) public dstBalances;
 
     // Mapping to track users who are part of the SuperSaiyan Set
-    mapping(address => uint256) private ssjVaults;
+    mapping(address => uint256) public ssjVaults;
 
     // Mapping to store addresses that approved or disapproved a campaign
     mapping(uint256 => address[]) private campaignApprovals;
@@ -64,7 +66,7 @@ contract DragonBlock {
      * @dev Private function to check if an address is in an array
      * @param _address The address to check
      * @param _listOfAddresses The array of addresses to search
-     * @return bool Whether the address is in the array or not
+     * @return Whether the address is in the array or not
      */
     function addressInArray(address _address, address[] storage _listOfAddresses) private view returns(bool) {
         for (uint i = 0; i < _listOfAddresses.length; i++) {
@@ -76,7 +78,7 @@ contract DragonBlock {
     }
 
     /**
-     * @dev Private function to slash SSJ users' funds of 250k Wei
+     * @dev Private function to slash SSJ users' funds
      * @param _campaignID The ID of the campaign
      */
     function slashSSJUsers(uint256 _campaignID) private {
@@ -125,9 +127,9 @@ contract DragonBlock {
      * @param _weekDuration Duration of the campaign in weeks
      */
     function createCampaign(uint256 _weiLimit, uint16 _weekDuration) public payable {
+        require(msg.value == _weiLimit * 5 / 100, "You have to deposit 5% of the weiLimit!");
         require(_weiLimit > 0, "The donation limit must be greater than 0");
         require(_weekDuration > 0, "The campaign duration (expressed in weeks) must be greater than 0");
-        require(msg.value == _weiLimit * 5 / 100, "You have to deposit 5% of the weiLimit!");
 
         campaigns.push(
             Campaign({
@@ -141,7 +143,35 @@ contract DragonBlock {
                 weekDuration: _weekDuration
             })
         );
+
+        emit CampaignCreation(campaigns.length-1);
     }
+
+    // Function to get a window of 20 elements starting from the last one
+    function getCampaigns(uint256 _campaignWindow) public view returns (Campaign[] memory) {
+        require(_campaignWindow > 0, "Window size must be greater than 0");
+        require(int256(campaigns.length) - int256(_campaignWindow-1) * 20 >= 0, "The window size is too large");
+
+        // Calculate the starting index for the window
+        int256 startIndex = int256(campaigns.length) - int256(_campaignWindow) * 20;
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+
+        // Calculate the actual number of elements to include in the result
+        uint256 numElements = uint256(startIndex + 20) <= campaigns.length ? 20 : campaigns.length - uint256(startIndex);
+
+        // Create a memory array to store the window of elements
+        Campaign[] memory result = new Campaign[](numElements);
+
+        // Use a loop to copy the elements to the result array
+        for (uint256 i = 0; i < numElements; i++) {
+            result[i] = campaigns[uint256(startIndex + int256(i))];
+        }
+
+        return result;
+    }
+
 
     /**
      * @dev Public function to donate to an active campaign
@@ -197,11 +227,11 @@ contract DragonBlock {
     }
 
     /**
-     * @dev Public function to finalize pending campaigns based on votes after 1 week
+     * @dev Public function to finalize pending campaigns based on votes after 7 days
      */
     function finalizeCampaigns() public {
         for (uint id = campaigns.length; id > 0; id--) {
-            if (campaigns[id - 1].status == CampaignStatus.PENDING && block.timestamp >= campaigns[id - 1].creationTime + 1 weeks) {
+            if (campaigns[id - 1].status == CampaignStatus.PENDING && block.timestamp >= campaigns[id - 1].creationTime + 0 days) {
                 // Check if the voting period has ended
                 if (campaignApprovals[id - 1].length > campaignDisapprovals[id - 1].length) {
                     campaigns[id - 1].status = CampaignStatus.ACTIVE;
@@ -210,7 +240,7 @@ contract DragonBlock {
                 }
             }
 
-            if (campaigns[id - 1].status == CampaignStatus.REVISION && block.timestamp >= campaigns[id - 1].revisionTime + 1 weeks) {
+            if (campaigns[id - 1].status == CampaignStatus.REVISION && block.timestamp >= campaigns[id - 1].revisionTime + 0 days) {
                 // Check if the voting period has ended
                 if (campaignRevisionApprovals[id - 1].length > campaignRevisionDisapprovals[id - 1].length) {
                     campaigns[id - 1].status = CampaignStatus.ACTIVE;

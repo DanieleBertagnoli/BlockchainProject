@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin, login_user, current_user, login_required, logout_user, LoginManager
 import secrets
@@ -23,13 +23,12 @@ login_manager = LoginManager(app)
 login_manager.login_view = '/login-page'  # Specify the endpoint for the login page
 
 class User(UserMixin):
-    def __init__(self, email, username, password_hash, birthday, metamask_address):
+    def __init__(self, email, username, password_hash, birthday):
         self.id = email  # Use email as the user ID
         self.email = email
         self.username = username
         self.password_hash = password_hash
         self.birthday = birthday
-        self.metamask_address = metamask_address
 
 
 @login_manager.user_loader
@@ -41,7 +40,7 @@ def load_user(email):
     db_cursor.close()
 
     if user_data:
-        return User(user_data['email'], user_data['username'], user_data['password_hash'], user_data['birthday'], user_data['metamask_address'])
+        return User(user_data['email'], user_data['username'], user_data['password_hash'], user_data['birthday'])
     return None
 
 
@@ -62,10 +61,9 @@ def signup():
     password = request.form.get('password')
     password_confirm = request.form.get('password-confirm')
     birthday = request.form.get('birthday')
-    metamask_address = request.form.get('metamask-address')
 
     # Validate the form data
-    if not email or not password or not password_confirm or not username or not metamask_address or not birthday:
+    if not email or not password or not password_confirm or not username or not birthday:
         error_msg = 'All fields are required.'
         return render_template('signup-page.html', error_msg=error_msg)
 
@@ -92,7 +90,7 @@ def signup():
 
     # Insert user into the database
     db_cursor = mysql_connection.cursor(dictionary=True)
-    db_cursor.execute("INSERT INTO users (email, username, password_hash, birthday, metamask_address) VALUES (%s, %s, %s, %s, %s)", (email, username, password_hash, birthday, metamask_address))
+    db_cursor.execute("INSERT INTO users (email, username, password_hash, birthday) VALUES (%s, %s, %s, %s)", (email, username, password_hash, birthday))
     mysql_connection.commit()
     db_cursor.close()
 
@@ -124,7 +122,7 @@ def login():
 
     if user and bcrypt.check_password_hash(user['password_hash'], password):
         # Successful login
-        login_user(User(user['email'], user['username'], user['password_hash'], user['birthday'], user['metamask_address']))
+        login_user(User(user['email'], user['username'], user['password_hash'], user['birthday']))
         return redirect('/home-page')
     else:
         # Invalid credentials
@@ -146,7 +144,53 @@ def home_page():
 @app.route('/profile-page')
 @login_required
 def profile_page():
-    return render_template('profile-page.html', username=current_user.username, email=current_user.email, date_of_birth=current_user.birthday, metamask_address=current_user.metamask_address)
+    return render_template('profile-page.html', username=current_user.username, email=current_user.email, date_of_birth=current_user.birthday)
+
+@app.route('/create-campaign')
+@login_required
+def create_campaign():
+    return render_template('create-campaign.html')
+
+@app.route('/save-campaign', methods=['POST'])
+@login_required
+def save_campaign():
+    # Retrieve form data
+    title = request.form.get('title')
+    description = request.form.get('description')
+    campaign_id = request.form.get('id')
+
+    # Validate the form data
+    if not title or not description or not campaign_id:
+        error_msg = 'All fields are required.'
+        return error_msg
+
+    # Insert campaign into the CAMPAIGNS table
+    db_cursor = mysql_connection.cursor(dictionary=True)
+    db_cursor.execute("INSERT INTO campaigns (title, description, id) VALUES (%s, %s, %s)", (title, description, campaign_id))
+    mysql_connection.commit()
+    db_cursor.close()
+
+    return 'success'
+
+@app.route('/get-campaigns', methods=['POST'])
+@login_required
+def get_campaigns():
+    data = request.get_json()
+    campaign_ids = data.get('campaign_ids', [])
+
+    # Replace this with your actual database logic to retrieve campaigns based on IDs
+    db_cursor = mysql_connection.cursor(dictionary=True)
+
+    # Use a WHERE clause to filter campaigns by specific IDs
+    placeholders = ', '.join(['%s' for _ in campaign_ids])
+    query = f"SELECT id, title, description FROM campaigns WHERE id IN ({placeholders})"
+    db_cursor.execute(query, tuple(campaign_ids))  # Convert the list to a tuple
+    
+    campaigns = db_cursor.fetchall()
+    db_cursor.close()
+
+    # Return the result as JSON
+    return jsonify(campaigns)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=80)
