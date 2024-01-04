@@ -56,10 +56,10 @@ async function checkForm()
         return false; // Prevent the form submission
     }
 
-    var weiLimit = $('#wei-limit').val();
-    if (weiLimit < 250000) 
+    var ethLimit = $('#eth-limit').val();
+    if (ethLimit < 0.05) 
     {
-        createErrorMsg('The wei limit must be greater than 250k.');
+        createErrorMsg('The wei limit must be greater than 0.05 ETH.');
         return false; // Prevent the form submission
     }
 
@@ -70,9 +70,11 @@ async function checkForm()
         return false; // Prevent the form submission
     }
 
-    const result = await contract.methods.createCampaign(weiLimit, weekDuration).send({
+    const deposit =  ethLimit*0.05;
+
+    const result = await contract.methods.createCampaign(web3.utils.toWei(ethLimit, 'ether'), weekDuration).send({
       from: metamaskAccount, 
-      value: weiLimit*5/100
+      value: web3.utils.toWei(deposit+'', 'ether')
     }); 
 
     const event = result.events.CampaignCreation;
@@ -88,10 +90,11 @@ async function checkForm()
           id: campaignId
       },
       success: function(response) {
-          console.log('Campaign details saved on the server:', response);
+          createSuccessMsg();
+          $('#form')[0].reset();
       },
       error: function(error) {
-          console.error('Error saving campaign details on the server:', error);
+          createErrorMsg(error);
       }
     });
 
@@ -119,4 +122,25 @@ function createErrorMsg(errorMsg)
     }  
     else // If it already exists, update the content
     { errorAlert.find('span').text(errorMsg); }
+}
+
+function createSuccessMsg() {
+  
+  // Check if the error message element already exists
+  var successAlert = $('#success-alert');
+
+  // If it doesn't exist, create it
+  if (!successAlert.length) 
+  {
+      var alertHtml = `
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+        Campaign created successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      `;
+
+      // Insert the error message element before the form
+      $('.form').before(alertHtml);
+  }
 }

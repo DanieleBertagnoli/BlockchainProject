@@ -39,9 +39,9 @@ function loadMoreCampaigns()
 }
 
 function promptDonation(campaignId) {
-  const donatedWei = prompt('Enter the number of donated Wei (step of 25k):');
-  if (donatedWei !== null && donatedWei%25000 == 0) {
-    donateCampaign(campaignId, donatedWei);
+  const donatedEth = prompt('Enter the number of donated ETH (step of 0.0005):');
+  if (donatedEth !== null && donatedEth%0.0005 == 0) {
+    donateCampaign(campaignId, donatedEth);
   }
   else {
     alert('You can donate only with steps of 25k wei');
@@ -49,29 +49,84 @@ function promptDonation(campaignId) {
 }
 
 function createCampaign(title, description, start, end, limit, donated, id, status) {
-  const newCampaign = $(
-    '<div class="single-campaign">' +
-    '<div class="campaign-header">' +
-    '<h2>' + title + '</h2>' +
-    '<h2>' + start + ' : ' + end + ' <i class="bi bi-calendar-fill"></i></h2>' +
-    '</div>' +
-    '<h2>' + status + '</h2>' +
-    '<div class="campaign-description">' +
-    '<p>' + description + '</p>' +
-    '</div>' +
-    '<div class="donated-wei">' +
-    '<h3>' + donated + ' / ' + limit + ' Wei</h3>' +
-    '</div>' +
-    '<div class="buttons buttons-campaigns">' +
-    '<div class="btn-wrapper">' +
-    '<button class="btn-custom btn-donate" data-id="' + id + '"><span>Donate</span><i class="bi bi-piggy-bank-fill"></i></button>' +
-    '</div>' +
-    '<div class="btn-wrapper">' +
-    '<button class="btn-custom btn-report" data-id="' + id + '"><span>Report</span><i class="bi bi-flag-fill"></i></button>' +
-    '</div>' +
-    '</div>' +
-    '</div>'
-  );
+  let newCampaign;
+  if(status == 'Pending' || status == 'Revision'){
+    newCampaign = $(
+      '<div class="single-campaign">' +
+      '<div class="campaign-header">' +
+      '<h2>' + title + '</h2>' +
+      '<h2>' + start + ' : ' + end + ' <i class="bi bi-calendar-fill"></i></h2>' +
+      '</div>' +
+      '<h2>' + status + '</h2>' +
+      '<div class="campaign-description">' +
+      '<p>' + description + '</p>' +
+      '</div>' +
+      '<div class="buttons buttons-campaigns">' +
+      '<div class="btn-wrapper">' +
+      '<button class="btn-custom btn-approve" data-id="' + id + '" data-status="' + status + '"><span>Approve</span><i class="bi bi-hand-thumbs-up-fill"></i></button>' +
+      '</div>' +
+      '<div class="btn-wrapper">' +
+      '<button class="btn-custom btn-disapprove" data-id="' + id + '" data-status="' + status + '"><span>Disapprove</span><i class="bi bi-hand-thumbs-down-fill"></i></button>' +
+      '</div>' +
+      '</div>' +
+      '</div>'
+    );
+  }
+  else if(status == 'Active'){
+    newCampaign = $(
+      '<div class="single-campaign">' +
+      '<div class="campaign-header">' +
+      '<h2>' + title + '</h2>' +
+      '<h2>' + start + ' : ' + end + ' <i class="bi bi-calendar-fill"></i></h2>' +
+      '</div>' +
+      '<h2>' + status + '</h2>' +
+      '<div class="campaign-description">' +
+      '<p>' + description + '</p>' +
+      '</div>' +
+      '<div class="donated-wei">' +
+      '<h3>' + donated + ' / ' + limit + ' Wei</h3>' +
+      '</div>' +
+      '<div class="buttons buttons-campaigns">' +
+      '<div class="btn-wrapper">' +
+      '<button class="btn-custom btn-donate" data-id="' + id + '"><span>Donate</span><i class="bi bi-piggy-bank-fill"></i></button>' +
+      '</div>' +
+      '<div class="btn-wrapper">' +
+      '<button class="btn-custom btn-report" data-id="' + id + '"><span>Report</span><i class="bi bi-flag-fill"></i></button>' +
+      '</div>' +
+      '</div>' +
+      '</div>'
+    );
+  }
+  else if(status == 'Ended'){
+    newCampaign = $(
+      '<div class="single-campaign">' +
+      '<div class="campaign-header">' +
+      '<h2>' + title + '</h2>' +
+      '<h2>' + start + ' : ' + end + ' <i class="bi bi-calendar-fill"></i></h2>' +
+      '</div>' +
+      '<h2>' + status + '</h2>' +
+      '<div class="campaign-description">' +
+      '<p>' + description + '</p>' +
+      '</div>' +
+      '<div class="donated-wei">' +
+      '<h3>' + donated + ' / ' + limit + ' ETH</h3>' +
+      '</div>' +
+      '</div>'
+    );
+  }
+  else if(status == 'Disapproved' || status == 'Banned'){
+    newCampaign = $(
+      '<div class="single-campaign">' +
+      '<div class="campaign-header">' +
+      '<h2>' + title + '</h2>' +
+      '</div>' +
+      '<h2>' + status + '</h2>' +
+      '<div class="campaign-description">' +
+      '<p>' + description + '</p>' +
+      '</div>' +
+      '</div>'
+    );
+  }
 
   // Attach event listener for the "Donate" button
   newCampaign.find('.btn-donate').on('click', function() {
@@ -85,7 +140,41 @@ function createCampaign(title, description, start, end, limit, donated, id, stat
     reportCampaign(campaignId);
   });
 
+  // Attach event listener for the "Report" button
+  newCampaign.find('.btn-approve').on('click', function() {
+    const campaignId = $(this).data('id');
+    const campaignStatus = $(this).data('status');
+    voteForCampaign(campaignId, true, campaignStatus);
+  });
+
+  // Attach event listener for the "Report" button
+  newCampaign.find('.btn-disapprove').on('click', function() {
+    const campaignId = $(this).data('id');
+    const campaignStatus = $(this).data('status');
+    voteForCampaign(campaignId, false, campaignStatus);
+  });
+
   $('#btn-more').before(newCampaign); // Insert the new campaign before the "Load More" button
+}
+
+async function voteForCampaign(campaignId, approval, campaignStatus) {
+
+  if(campaignStatus == "Pending") {
+    try {
+      await contract.methods.voteForCampaign(campaignId, approval).send({from: metamaskAccount});
+      alert('Vote sent!');
+    } catch(e) {
+      alert('You have already voted for this campaign');
+    }
+  }
+  else if (campaignStatus == "Revision") {
+    try {
+      await contract.methods.revisionCampaign(campaignId, approval).send({from: metamaskAccount});
+      alert('Vote sent!');
+    } catch(e) {
+      alert('You have already voted for this campaign');
+    }
+  }
 }
 
 async function loadContractInfo() {
@@ -98,18 +187,32 @@ async function loadContractInfo() {
   const dstBalance = await contract.methods.dstBalances(metamaskAccount).call();
   $('#dst-amount').text(dstBalance);
 
-  if(dstBalance < 100)
-  { $('#become-ssj').hide(); }
+  if(dstBalance < 100){ 
+    $('#become-ssj').hide(); 
+    $('#exit-ssj').hide();
+  }
+
+  await loadCampaignWindow();
 
   const vault = await contract.methods.ssjVaults(metamaskAccount).call();
 
-  if(vault > 0)
-  { $('#user-role').text('SSJ'); }
-  else
-  { $('#user-role').text('NormalUser'); }
-
-  loadCampaignWindow();
+  if(vault > 0){ 
+    $('#user-role').text('SSJ, Vault:' + web3.utils.fromWei(vault, 'ether') + ' ETH'); 
+    $('#exit-ssj').show();
+    $('#become-ssj').hide();
+    $('.btn-approve').show();
+    $('.btn-disapprove').show(); 
+  }
+  else{ 
+    $('#user-role').text('NormalUser'); 
+    $('.btn-approve').hide();
+    $('.btn-disapprove').hide(); 
+    $('#become-ssj').show();
+    $('#exit-ssj').hide();
+  }
 }
+
+window.loadCampaignWindow = function () { loadCampaignWindow(); }
 
 async function loadCampaignWindow()
 {
@@ -134,27 +237,50 @@ async function loadCampaignWindow()
       let start = convertUnixTimestamp(campaigns[i]["creationTime"]);
       let weeksUnix = campaigns[i]["weekDuration"] * 7 * 24 * 60 * 60;
       let end = convertUnixTimestamp(parseInt(campaigns[i]["creationTime"]) + parseInt(weeksUnix));
-      let limit = campaigns[i]["weiLimit"];
-      let donated = campaigns[i]["donatedWei"];
+      let limit = web3.utils.fromWei(campaigns[i]["weiLimit"], 'ether');
+      let donated = web3.utils.fromWei(campaigns[i]["donatedWei"], 'ether');
       let id = titlesDescriptions[i]["id"];
       let status = getStatusString(campaigns[i]["status"]);
 
       createCampaign(title, description, start, end, limit, donated, id, status);
     }
-  } else {
-    console.error('Failed to retrieve campaign titles and descriptions');
-  }
+  } 
 }
+
+window.exitSSJ = function() { exitSSJ(); };
+
+async function exitSSJ()
+{
+  await contract.methods.becomeNormalUser().send({from: metamaskAccount});
+  
+  $('#user-role').text('NormalUser'); 
+  $('.btn-approve').hide();
+  $('.btn-disapprove').hide(); 
+  $('#become-ssj').show();
+  $('#exit-ssj').hide();
+}
+
+window.becomeSSJ = function() { becomeSSJ(); };
 
 async function becomeSSJ()
 {
-  await contract.methods.becomeSSJ().send({from: metamaskAccount, value: web3.utils.toWei('1', 'ether')});
+  await contract.methods.becomeSSJ().send({from: metamaskAccount, value: web3.utils.toWei('0.5', 'ether')});
   const vault = await contract.methods.ssjVaults(metamaskAccount).call();
 
-  if(vault > 0)
-  { $('#user-role').text('SSJ, Vault:' + vault); }
-  else
-  { $('#user-role').text('NormalUser'); }
+  if(vault > 0){ 
+    $('#user-role').text('SSJ, Vault:' + web3.utils.fromWei(vault, 'ether') + ' ETH'); 
+    $('#exit-ssj').show();
+    $('#become-ssj').hide();
+    $('.btn-approve').show();
+    $('.btn-disapprove').show(); 
+  }
+  else{ 
+    $('#user-role').text('NormalUser'); 
+    $('.btn-approve').hide();
+    $('.btn-disapprove').hide(); 
+    $('#become-ssj').show();
+    $('#exit-ssj').hide();
+  }
 }
 
 async function reportCampaign(id) {
@@ -163,15 +289,15 @@ async function reportCampaign(id) {
     alert('You don\'t have enough DST!');
   }
   else {
-    await contract.methods.reportCampaign(id).call();
+    await contract.methods.reportCampaign(id).send({from:metamaskAccount});
     const dstBalance = await contract.methods.dstBalances(metamaskAccount).call();
     $('#dst-amount').text(dstBalance); 
     alert('Campaign reported! 1 DST removed');
   }
 }
 
-async function donateCampaign(id, amount) {
-  await contract.methods.donateCampaign(id).send({from: metamaskAccount, value: amount});
+async function donateCampaign(id, donatedEth) {
+  await contract.methods.donateCampaign(id).send({from: metamaskAccount, value: web3.utils.toWei(donatedEth, 'ether')});
   const dstBalance = await contract.methods.dstBalances(metamaskAccount).call();
   $('#dst-amount').text(dstBalance); 
   alert('Donation completed!');

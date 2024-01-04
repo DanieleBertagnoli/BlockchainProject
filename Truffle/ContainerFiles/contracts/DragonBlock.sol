@@ -51,6 +51,12 @@ contract DragonBlock {
     // Mapping to store addresses that reported a campaign
     mapping(uint256 => address[]) private campaignReports;
 
+    struct Donation {
+        address donator;
+        uint256 donatedWei;
+    }
+    mapping (uint256 => Donation[]) private donators;
+
     // Address of the contract creator
     address public minter;
 
@@ -59,7 +65,7 @@ contract DragonBlock {
      */
     constructor() {
         minter = msg.sender; // Initialize DST balance for a default address
-        dstBalances[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = 200;
+        dstBalances[0x715428e23981A4DC06a20559AC17D81C20b9bB02] = 200;
     }
 
     /**
@@ -116,8 +122,15 @@ contract DragonBlock {
      */
     function rewardReporters(uint256 _campaignID) private {
         for (uint i = 0; i < campaignReports[_campaignID].length; i++) {
-            address rewardedUser = campaignApprovals[_campaignID][i];
+            address rewardedUser = campaignReports[_campaignID][i];
             dstBalances[rewardedUser] += 2;
+        }
+    }
+
+    function refundDonators(uint256 _campaignID) private {
+        for (uint i = 0; i < donators[_campaignID].length; i++) {
+            address payable user = payable(donators[_campaignID][i].donator);
+            user.transfer(donators[_campaignID][i].donatedWei);
         }
     }
 
@@ -128,13 +141,14 @@ contract DragonBlock {
      */
     function createCampaign(uint256 _weiLimit, uint16 _weekDuration) public payable {
         require(msg.value == _weiLimit * 5 / 100, "You have to deposit 5% of the weiLimit!");
-        require(_weiLimit > 0, "The donation limit must be greater than 0");
+        require(_weiLimit > 0.05 ether, "The donation limit must be greater than 0.05 ETH");
+        require(_weiLimit % 0.005 ether == 0, "The donation limit must be a multiple of 0.005 ETH");
         require(_weekDuration > 0, "The campaign duration (expressed in weeks) must be greater than 0");
 
         campaigns.push(
             Campaign({
                 owner: msg.sender,
-                id: campaigns.length,
+                id: campaigns.length, 
                 status: CampaignStatus.PENDING,
                 weiLimit: _weiLimit,
                 donatedWei: 0,
@@ -182,10 +196,23 @@ contract DragonBlock {
         require(campaigns[_id].status == CampaignStatus.ACTIVE, "The specified campaign is not active");
         require(campaigns[_id].weiLimit - campaigns[_id].donatedWei - msg.value >= 0, "The limit for this campaign has been reached");
         require(msg.value > 0, "The donation must be greater than zero");
-        require(msg.value % 50000 == 0, "You can donate only using steps of 50k wei");
+        require(msg.value % 0.0005 ether == 0, "You can donate only using steps of 0.0005 ETH");
 
         campaigns[_id].donatedWei += msg.value; // Update the campaign's donatedWei field
-        dstBalances[msg.sender] += msg.value / 50000;
+        dstBalances[msg.sender] += msg.value / 0.0005 ether;
+        donators[_id].push(Donation({
+            donator: msg.sender,
+            donatedWei: msg.value
+            })
+        );
+
+        if (campaigns[_id].status == CampaignStatus.ACTIVE && (block.timestamp >= campaigns[_id].creationTime + campaigns[_id].weekDuration * 1 weeks || campaigns[_id].donatedWei == campaigns[_id].weiLimit)) {
+                campaigns[_id].status = CampaignStatus.ENDED;
+                rewardSSJUsers(_id);
+
+                address payable campaignOwner = payable(campaigns[_id].owner);
+                campaignOwner.transfer(campaigns[_id].donatedWei);
+            }
     }
 
     /**
@@ -212,8 +239,8 @@ contract DragonBlock {
      * @param _id The ID of the campaign
      * @param _approval Whether the user approves or disapproves the campaign
      */
-    function voteForCampaign(uint256 _id, bool _approval) public {
-        require(ssjVaults[msg.sender] > 0, "You are not part of the SuperSaiyan Set!");
+    function voteForCampaign(uint256 _id, bool _approval) public returns(uint256) {
+        //require(ssjVaults[msg.sender] > 0, "You are not part of the SuperSaiyan Set!");
         require(campaigns[_id].status == CampaignStatus.PENDING, "The specified campaign is not pending!");
         require(!addressInArray(msg.sender, campaignApprovals[_id]), "You have already approved this campaign");
         require(!addressInArray(msg.sender, campaignDisapprovals[_id]), "You have already disapproved this campaign");
@@ -224,46 +251,17 @@ contract DragonBlock {
         } else {
             campaignDisapprovals[_id].push(msg.sender);
         }
-    }
 
-    /**
-     * @dev Public function to finalize pending campaigns based on votes after 7 days
-     */
-    function finalizeCampaigns() public {
-        for (uint id = campaigns.length; id > 0; id--) {
-            if (campaigns[id - 1].status == CampaignStatus.PENDING && block.timestamp >= campaigns[id - 1].creationTime + 0 days) {
-                // Check if the voting period has ended
-                if (campaignApprovals[id - 1].length > campaignDisapprovals[id - 1].length) {
-                    campaigns[id - 1].status = CampaignStatus.ACTIVE;
-                } else {
-                    campaigns[id - 1].status = CampaignStatus.DISAPPROVED;
-                }
-            }
-
-            if (campaigns[id - 1].status == CampaignStatus.REVISION && block.timestamp >= campaigns[id - 1].revisionTime + 0 days) {
-                // Check if the voting period has ended
-                if (campaignRevisionApprovals[id - 1].length > campaignRevisionDisapprovals[id - 1].length) {
-                    campaigns[id - 1].status = CampaignStatus.ACTIVE;
-                    campaigns[id - 1].revisionTime = 0;
-                    delete campaignRevisionApprovals[id - 1];
-                    delete campaignRevisionDisapprovals[id - 1];
-                } else {
-                    campaigns[id - 1].status = CampaignStatus.BANNED;
-                    slashSSJUsers(id - 1);
-                    rewardReporters(id - 1);
-                }
-            }
-
-            if (campaigns[id - 1].status == CampaignStatus.ACTIVE &&
-                (block.timestamp >= campaigns[id - 1].creationTime + campaigns[id - 1].weekDuration * 1 weeks ||
-                 campaigns[id - 1].donatedWei == campaigns[id - 1].weiLimit)) {
-                campaigns[id - 1].status = CampaignStatus.ENDED;
-                rewardSSJUsers(id - 1);
-
-                address payable campaignOwner = payable(campaigns[id - 1].owner);
-                campaignOwner.transfer(campaigns[id - 1].donatedWei);
+        if (campaigns[_id].status == CampaignStatus.PENDING && block.timestamp >= campaigns[_id].creationTime + 0 days) {
+            // Check if the voting period has ended
+            if (campaignApprovals[_id].length > campaignDisapprovals[_id].length) {
+                campaigns[_id].status = CampaignStatus.ACTIVE;
+            } else {
+                campaigns[_id].status = CampaignStatus.DISAPPROVED;
             }
         }
+
+        return ssjVaults[msg.sender];
     }
 
     /**
@@ -283,6 +281,21 @@ contract DragonBlock {
         } else {
             campaignRevisionDisapprovals[_id].push(msg.sender);
         }
+
+        if (campaigns[_id].status == CampaignStatus.REVISION && block.timestamp >= campaigns[_id].revisionTime + 0 days) {
+            // Check if the voting period has ended
+            if (campaignRevisionApprovals[_id].length > campaignRevisionDisapprovals[_id].length) {
+                campaigns[_id].status = CampaignStatus.ACTIVE;
+                campaigns[_id].revisionTime = 0;
+                delete campaignRevisionApprovals[_id];
+                delete campaignRevisionDisapprovals[_id];
+            } else {
+                campaigns[_id].status = CampaignStatus.BANNED;
+                slashSSJUsers(_id);
+                rewardReporters(_id);
+                refundDonators(_id);
+            }
+        }
     }
 
     /**
@@ -291,7 +304,7 @@ contract DragonBlock {
     function becomeSSJ() public payable {
         require(ssjVaults[msg.sender] == 0, "You are already part of the SuperSaiyan Set!");
         require(dstBalances[msg.sender] >= 100, "You must hold at least 100 DST to become part of the SuperSaiyan Set!");
-        require(msg.value > 0.5 ether, "You have to deposit at least 0.5 ETH to become a SuperSaiyan!");
+        require(msg.value >= 0.5 ether, "You have to deposit at least 0.5 ETH to become a SuperSaiyan!");
 
         ssjVaults[msg.sender] = msg.value;
     }

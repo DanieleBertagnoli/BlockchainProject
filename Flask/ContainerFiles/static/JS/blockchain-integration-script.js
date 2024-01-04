@@ -1,7 +1,7 @@
 const web3 = new Web3(Web3.givenProvider || "ws://172.17.0.1:7545");
 
 // Specify the address of your deployed smart contract
-const contractAddress = '0xA5D4FEFF8cDfe352154B14bDd4Be97ee3cf818DA'; // Replace with the actual address
+const contractAddress = '0x3FD241aeE6Fc04d898f4f2b3fCC838A2b19f6949'; // Replace with the actual address
 const contractJSON = '/static/ContractsJSON/DragonBlock.json';
 
 export async function getContract() {

@@ -23,11 +23,12 @@ login_manager = LoginManager(app)
 login_manager.login_view = '/login-page'  # Specify the endpoint for the login page
 
 class User(UserMixin):
-    def __init__(self, email, username, password_hash, birthday):
+    def __init__(self, email, username, password_hash, ethereum_address, birthday):
         self.id = email  # Use email as the user ID
         self.email = email
         self.username = username
         self.password_hash = password_hash
+        self.ethereum_address = ethereum_address
         self.birthday = birthday
 
 
@@ -40,7 +41,7 @@ def load_user(email):
     db_cursor.close()
 
     if user_data:
-        return User(user_data['email'], user_data['username'], user_data['password_hash'], user_data['birthday'])
+        return User(user_data['email'], user_data['username'], user_data['password_hash'], user_data['ethereum_address'], user_data['birthday'])
     return None
 
 
@@ -61,9 +62,10 @@ def signup():
     password = request.form.get('password')
     password_confirm = request.form.get('password-confirm')
     birthday = request.form.get('birthday')
+    ethereum_address = request.form.get('ethereum-address')
 
     # Validate the form data
-    if not email or not password or not password_confirm or not username or not birthday:
+    if not email or not password or not password_confirm or not username or not ethereum_address or not birthday:
         error_msg = 'All fields are required.'
         return render_template('signup-page.html', error_msg=error_msg)
 
@@ -90,7 +92,7 @@ def signup():
 
     # Insert user into the database
     db_cursor = mysql_connection.cursor(dictionary=True)
-    db_cursor.execute("INSERT INTO users (email, username, password_hash, birthday) VALUES (%s, %s, %s, %s)", (email, username, password_hash, birthday))
+    db_cursor.execute("INSERT INTO users (email, username, password_hash, ethereum_address, birthday) VALUES (%s, %s, %s, %s, %s)", (email, username, password_hash, ethereum_address, birthday))
     mysql_connection.commit()
     db_cursor.close()
 
@@ -122,7 +124,7 @@ def login():
 
     if user and bcrypt.check_password_hash(user['password_hash'], password):
         # Successful login
-        login_user(User(user['email'], user['username'], user['password_hash'], user['birthday']))
+        login_user(User(user['email'], user['username'], user['password_hash'], user['ethereum_address'], user['birthday']))
         return redirect('/home-page')
     else:
         # Invalid credentials
@@ -144,7 +146,7 @@ def home_page():
 @app.route('/profile-page')
 @login_required
 def profile_page():
-    return render_template('profile-page.html', username=current_user.username, email=current_user.email, date_of_birth=current_user.birthday)
+    return render_template('profile-page.html', username=current_user.username, email=current_user.email, ethereum_address=current_user.ethereum_address, date_of_birth=current_user.birthday)
 
 @app.route('/create-campaign')
 @login_required

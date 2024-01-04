@@ -17,6 +17,7 @@
     display: flex;
     margin: 2rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .dst h1
@@ -28,10 +29,10 @@
     margin-left: 1rem;
 }
 
-.btn-report::after
+.btn-report::after, .btn-disapprove::after
 { background: var(--bs-danger); }
 
-.btn-report
+.btn-report, .btn-disapprove
 { border: 2px solid var(--bs-danger); }
 
 .buttons-campaigns

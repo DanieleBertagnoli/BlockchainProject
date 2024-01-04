@@ -185,7 +185,7 @@ ul
     margin: 0 !important;
     padding: 7px 14px;
     overflow-wrap: normal;
-
+    cursor: pointer;
     font-size: 1.3rem;
 }
 

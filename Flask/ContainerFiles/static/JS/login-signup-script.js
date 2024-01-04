@@ -1,4 +1,18 @@
-function checkForm(formType)
+import { getContract } from "./blockchain-integration-script.js";
+
+let contract;
+let metamaskAccount;
+
+loadContractInfo();
+
+async function loadContractInfo()
+{
+    const info = await getContract();
+    contract = info[0];
+    metamaskAccount = info[1];
+}
+
+window.checkForm = function (formType)
 {
     // Validate email
     var email = $('#email').val();
@@ -16,6 +30,7 @@ function checkForm(formType)
         var passwordConfirm = $('#password-confirm').val();
         var username = $('#username').val();
         var birthday = $('#birthday').val();
+        var ethereumAddress = $('#ethereum-address').val();
 
         if (!username) 
         {
@@ -26,6 +41,12 @@ function checkForm(formType)
         if(!birthday)
         {
             createErrorMsg('Please enter your date of birth.');
+            return false; // Prevent the form submission
+        }
+
+        if(!ethereumAddress)
+        {
+            createErrorMsg('Please enter your ethereum address.');
             return false; // Prevent the form submission
         }
 
@@ -60,6 +81,8 @@ function checkForm(formType)
     }
     else
     { return false; }
+
+    return true;
 }
 
 function createErrorMsg(errorMsg) 

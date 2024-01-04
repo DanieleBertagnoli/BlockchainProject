@@ -85,20 +85,24 @@
         <div class="dst">
             <h1>ACCOUNT DST BALANCE: <span id="dst-amount">user_dst</span> </h1>
             <img src="{{ url_for('static', filename='Images/dst.png') }}" alt="DST">
-            <div id="campaigns"></div>
 
             <div class="btn-wrapper">
                 <a class="btn-custom" id="become-ssj" onclick="becomeSSJ();"><span>Become a SSJ</span><i class="bi bi-person-up"></i></a>
             </div>
 
+            <div class="btn-wrapper">
+                <a class="btn-custom btn-report" id="exit-ssj" onclick="exitSSJ();"><span>Exit SSJ Set</span><i class="bi bi-person-up"></i></a>
+            </div>
+
             <h2>Role: <span id="user-role">user_role</span></h2>
+
         </div>
 
-        <div class="white-line"></div>
+        <div id="campaigns" class="white-line"></div>
 
         <div class="animated campaigns">
 
-            <h1 class="section-title">LIST OF ACTIVE CAMPAIGNS <img src="{{ url_for('static', filename='Images/donate.png') }}" alt="Active Campaigns"></h1>
+            <h1 class="section-title">CAMPAIGNS LIST<img src="{{ url_for('static', filename='Images/donate.png') }}" alt="Active Campaigns"></h1>
 
             <div class="btn-wrapper">
                 <a class="btn-custom" href="/create-campaign"><span>Create Campaign</span><i class="bi bi-person-up"></i></a>
@@ -107,7 +111,7 @@
             <div class="campaigns-container">
 
                 <div class="btn-wrapper" id="btn-more">
-                    <button class="btn-custom" onclick="loadMoreCampaigns()"><span>Show More</span><i class="bi bi-plus-circle"></i></button>
+                    <button class="btn-custom" onclick="loadCampaignWindow();"><span>Show More</span><i class="bi bi-plus-circle"></i></button>
                 </div>
 
             </div>

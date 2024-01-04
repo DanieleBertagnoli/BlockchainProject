@@ -61,19 +61,13 @@
 
         <div class="background">
 
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-                errore
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-
-            <form class="form">
+            <form class="form" id="form">
 
                 <h1>CREATE CAMPAGIN</h1>
 
                 <input type="text" id="title" placeholder="Tile">
                 <textarea type="text" id="description" placeholder="Description"></textarea>
-                <input type="number" id="wei-limit" placeholder="Wei Limit" min="250000" step="25000">
+                <input type="number" id="eth-limit" placeholder="Eth Limit" min="0.05" step="0.005">
                 <input type="number" id="week-duration" placeholder="Duration in weeks" min="1">
 
                 <input type="submit" name="submit" value="Create">
