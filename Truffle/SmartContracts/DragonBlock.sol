@@ -57,7 +57,7 @@ contract DragonBlock {
      */
     constructor() {
         minter = msg.sender; // Initialize DST balance for a default address
-        dstBalances[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = 200;
+        dstBalances[msg.sender] = 200;
     }
 
     /**

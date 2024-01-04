@@ -50,6 +50,22 @@ Truffle is a powerful development framework for Ethereum that simplifies the pro
 ### 6. Security
 Through the blockchain, we can guarantee that the transactions are safe. Moreover, to discourage malicious users, when someone wants to create a new account, they have to pay a small fee. In this way, if an account is banned by the platform (more than one campaign has been closed due to reports), the user has to pay again to create a brand-new account. Every MetaMask account can be linked with only one system account.
 
-## Conclusion
+## Installation and Configuration
 
-This project aims to create a user-friendly and secure crowdfunding DApp on the Ethereum blockchain. Through MetaMask integration, DST creation, the ability to create or donate to campaigns, and the implementation of Truffle for smart contract development and testing, users will experience a seamless and transparent platform for supporting a wide array of projects.
+### Ganache
+The project uses Ganache as local blockchain network (even if the support will end very soon), so download it from this [link](https://trufflesuite.com/ganache/). Once downloaded, you can simply run the AppImage file:
+
+1. Start a new network by clicking on `Quickstart`.
+2. Modify the network settings so that ganache can be accessed by the docker containers. Click the settings icon, navigate to the `server` tab and select as `hostname: 0.0.0.0 All interfaces`.
+
+
+### Metamask
+The platform has a full integration with Metamask wallet, therefore, install the browser extension. To test it using the Ganache's accounts follow this [short guide](https://docs.cranq.io/web-3/setting-up-ganache-with-metamask).
+
+
+### Docker
+In order to run the system you must have docker and docker-compose installed on youre computer. If you didn't installed them yet, you can do that by following the [official Docker installation guide](https://docs.docker.com/engine/install/) and [official Docker Compose installation guide](https://docs.docker.com/compose/migrate/).
+
+
+### Run the System
+To run the system, you have simply to `run docker-compose up` in the repository's root directory. After that you have to copy the contract address prompted in the terminal and paste it in the file `/Flask/ContainerFiles/static/JS/blockchain-integration-script.js` (there is the variable called `contractAddress` on top of the script). The platform will be now accessible at the address `127.0.0.1`.
