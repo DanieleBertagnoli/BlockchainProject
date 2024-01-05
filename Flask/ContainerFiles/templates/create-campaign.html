@@ -41,21 +41,15 @@
             <ul class="menu">
 
                 <div class="left">
-                    <li><a href="/home-page" onclick="toggleMenu()">Home</a></li>
+                    <li><a href="/home-page">Home</a></li>
                 </div>
 
                 <div class="right">
-                    <li><a href="/signup-page" onclick="toggleMenu()">Signup</a></li>
-                    <li><a href="/login-page" onclick="toggleMenu()">Login</a></li>
+                    <li><a href="/signup-page">Signup</a></li>
+                    <li><a href="/login-page">Login</a></li>
                 </div>
 
             </ul>
-
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
 
         </div>
 
@@ -68,7 +62,7 @@
                 <input type="text" id="title" placeholder="Tile">
                 <textarea type="text" id="description" placeholder="Description"></textarea>
                 <input type="number" id="eth-limit" placeholder="Eth Limit" min="0.05" step="0.005">
-                <input type="number" id="week-duration" placeholder="Duration in weeks" min="1">
+                <input type="number" id="week-duration" placeholder="Duration in weeks" min="8" step="1">
 
                 <input type="submit" name="submit" value="Create">
 

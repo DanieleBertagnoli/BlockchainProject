@@ -10,6 +10,7 @@ body
     padding: 8rem 0;
     height: fit-content;
     background: none;
+    align-items: center;
 }
 
 .profile
@@ -20,7 +21,6 @@ body
     padding: 0 2rem;
 
     border-radius: 20px;
-    border: 1px solid red;
 }
 
 .profile h1
@@ -36,3 +36,18 @@ body
 
 .profile img
 { height: 35px; }
+
+.campaigns-container 
+{ 
+    height: fit-content; 
+    overflow-y: visible;
+}
+
+.campaigns 
+{
+    width: inherit;
+    max-height: 600px;
+}
+
+.campaigns-container h1 img
+{ height: 140px; }

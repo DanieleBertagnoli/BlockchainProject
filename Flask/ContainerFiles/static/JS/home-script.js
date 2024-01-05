@@ -28,31 +28,49 @@ $(document).ready(function()
   loadContractInfo();
 });
 
-function loadMoreCampaigns() 
-{
-    for (let i = 0; i < 2; i++) 
-    {
-        const newCampaign = createCampaign("New Campaign Title", "Description for the new campaign.");
-        $('#btns-more-less').before(newCampaign); // Insert the new campaign before the "Load More" button
-    }
-    updateShowLessButton();
+function promptDonation(campaignId) {
+  // Find the campaign element using jQuery
+  const campaignElement = $('#' + campaignId);
+
+  // Extract the end date from the campaign element
+  const endDateText = campaignElement.find('.campaign-header h2:last-child').text().split(' : ')[1];
+  const endDate = new Date(endDateText);
+
+  // Check if the current date is after the end date
+  const currentDate = new Date();
+  if (currentDate > endDate) {
+    alert('This campaign has ended.');
+    return;
+  }
+
+  // Extract the donated and limit values from the campaign element
+  const donatedText = campaignElement.find('.donated-eth h3').text().split(' / ');
+  const donated = parseFloat(donatedText[0]);
+  const limit = parseFloat(donatedText[1].replace('ETH', ''));
+
+  // Prompt for donation amount
+  const donatedEth = parseFloat(prompt('Enter the number of donated ETH (step of 0.0005):'));
+
+  if (donatedEth == null || (donatedEth * 1000) % (0.0005 * 1000) != 0) {
+    alert('You can donate only with steps of 0.0005 ETH');
+    return;
+  }
+
+  if (donated + donatedEth > limit) {
+    alert('Donation exceeds the campaign limit.');
+    return;
+  }
+
+  donateCampaign(campaignId, donatedEth + '');
 }
 
-function promptDonation(campaignId) {
-  const donatedEth = prompt('Enter the number of donated ETH (step of 0.0005):');
-  if (donatedEth !== null && donatedEth%0.0005 == 0) {
-    donateCampaign(campaignId, donatedEth);
-  }
-  else {
-    alert('You can donate only with steps of 25k wei');
-  }
-}
+
 
 function createCampaign(title, description, start, end, limit, donated, id, status) {
   let newCampaign;
   if(status == 'Pending' || status == 'Revision'){
     newCampaign = $(
-      '<div class="single-campaign">' +
+      '<div class="single-campaign" id=' + id + '>' +
       '<div class="campaign-header">' +
       '<h2>' + title + '</h2>' +
       '<h2>' + start + ' : ' + end + ' <i class="bi bi-calendar-fill"></i></h2>' +
@@ -74,7 +92,7 @@ function createCampaign(title, description, start, end, limit, donated, id, stat
   }
   else if(status == 'Active'){
     newCampaign = $(
-      '<div class="single-campaign">' +
+      '<div class="single-campaign" id=' + id + '>' +
       '<div class="campaign-header">' +
       '<h2>' + title + '</h2>' +
       '<h2>' + start + ' : ' + end + ' <i class="bi bi-calendar-fill"></i></h2>' +
@@ -83,8 +101,8 @@ function createCampaign(title, description, start, end, limit, donated, id, stat
       '<div class="campaign-description">' +
       '<p>' + description + '</p>' +
       '</div>' +
-      '<div class="donated-wei">' +
-      '<h3>' + donated + ' / ' + limit + ' Wei</h3>' +
+      '<div class="donated-eth">' +
+      '<h3>' + donated + ' / ' + limit + ' ETH</h3>' +
       '</div>' +
       '<div class="buttons buttons-campaigns">' +
       '<div class="btn-wrapper">' +
@@ -99,7 +117,7 @@ function createCampaign(title, description, start, end, limit, donated, id, stat
   }
   else if(status == 'Ended'){
     newCampaign = $(
-      '<div class="single-campaign">' +
+      '<div class="single-campaign" id=' + id + '>' +
       '<div class="campaign-header">' +
       '<h2>' + title + '</h2>' +
       '<h2>' + start + ' : ' + end + ' <i class="bi bi-calendar-fill"></i></h2>' +
@@ -116,7 +134,7 @@ function createCampaign(title, description, start, end, limit, donated, id, stat
   }
   else if(status == 'Disapproved' || status == 'Banned'){
     newCampaign = $(
-      '<div class="single-campaign">' +
+      '<div class="single-campaign" id=' + id + '>' +
       '<div class="campaign-header">' +
       '<h2>' + title + '</h2>' +
       '</div>' +
@@ -154,6 +172,19 @@ function createCampaign(title, description, start, end, limit, donated, id, stat
     voteForCampaign(campaignId, false, campaignStatus);
   });
 
+  const startDate = new Date(start);
+
+  // Calculate the date after 7 days
+  const sevenDaysAfterStart = new Date(startDate);
+  sevenDaysAfterStart.setDate(startDate.getDate() + 0);
+
+  // Check if the current date is more than 7 days after the start date
+  const currentDate = new Date();
+  if (currentDate > sevenDaysAfterStart) {
+      // If more than 7 days have passed, hide the buttons
+      newCampaign.find('.btn-approve, .btn-disapprove').hide();
+  }
+
   $('#btn-more').before(newCampaign); // Insert the new campaign before the "Load More" button
 }
 
@@ -187,7 +218,7 @@ async function loadContractInfo() {
   const dstBalance = await contract.methods.dstBalances(metamaskAccount).call();
   $('#dst-amount').text(dstBalance);
 
-  if(dstBalance < 100){ 
+  if(dstBalance < 500){ 
     $('#become-ssj').hide(); 
     $('#exit-ssj').hide();
   }

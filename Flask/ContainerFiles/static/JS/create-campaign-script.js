@@ -63,10 +63,16 @@ async function checkForm()
         return false; // Prevent the form submission
     }
 
+    const combactLvl = await contract.methods.getUserCombactLvl(metamaskAccount).call();
+    if(ethLimit > combactLvl / 10) {
+      createErrorMsg("Your combact level is too low for the requested ETH!");
+      return false; // Prevent the form submission
+    }
+    
     var weekDuration = $('#week-duration').val();
-    if (weekDuration < 1) 
+    if (weekDuration < 8) 
     {
-        createErrorMsg('The campaign duration must be at least 1 week.');
+        createErrorMsg('The campaign duration must be at least 8 week.');
         return false; // Prevent the form submission
     }
 

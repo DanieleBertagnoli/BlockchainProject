@@ -13,14 +13,19 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='CSS/index-style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='CSS/home-style.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='CSS/profile-style.css') }}">
 
         <!-- JQuery and Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
+        <!-- Load Web3 -->
+        <script src="https://cdn.jsdelivr.net/npm/web3@1.5.0/dist/web3.min.js"></script>
+
         <!-- Link to the script -->
-        <script src="{{ url_for('static', filename='JS/profile-script.js') }}"></script>  
+        <script type="module" src="{{ url_for('static', filename='JS/blockchain-integration-script.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='JS/profile-script.js') }}"></script>  
 
         <!-- Link for the Logo -->
         <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='Images/favicon.ico') }}">
@@ -65,6 +70,26 @@
                 <div class="profile-info">
                     <h2><i class="bi bi-envelope-at-fill"></i><span> EMAIL:</span> {{ email }}</h2>
                     <h2><i class="bi bi-cake-fill"></i></i><span> DATE OF BIRTH:</span> {{ date_of_birth }}</h2>
+                    <h2><img src="{{ url_for('static', filename='Images/metamask.png') }}" alt="MetaMask"><span> ETHEREUM ADDRESS:</span> {{ ethereum_address }}</h2>
+                </div>
+
+            </div>
+
+            <div class="campaigns-container">
+
+                <h1 class="section-title">Pending Campaigns<img src="{{ url_for('static', filename='Images/create.png') }}" alt="Active Campaigns"></h1>
+                <div class="campaigns" id="pending-campaigns">
+
+                </div>
+
+                <h1 class="section-title">Active Campaigns<img src="{{ url_for('static', filename='Images/donate.png') }}" alt="Active Campaigns"></h1>
+                <div class="campaigns" id="active-campaigns">
+
+                </div>
+
+                <h1 class="section-title">Ended Campaigns<img src="{{ url_for('static', filename='Images/donate.png') }}" alt="Active Campaigns"></h1>
+                <div class="campaigns" id="ended-campaigns">
+
                 </div>
 
             </div>
