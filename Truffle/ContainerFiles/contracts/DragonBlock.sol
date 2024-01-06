@@ -240,7 +240,6 @@ contract DragonBlock {
         return ownedCampaigns;
     }
 
-
     /**
      * @dev Public function to donate to an active campaign
      * @param _id The ID of the campaign
@@ -248,7 +247,7 @@ contract DragonBlock {
     function donateCampaign(uint256 _id) public payable {
         require(_id < campaigns.length, "The specified campaign does not exist");
         require(campaigns[_id].status == CampaignStatus.ACTIVE, "The specified campaign is not active");
-        require(block.timestamp < campaigns[_id].creationTime + (campaigns[_id].weekDuration * 1 weeks), "The specified campaign is no more active, the owner should finalize it");
+        require(block.timestamp <= campaigns[_id].creationTime + (campaigns[_id].weekDuration * 1 weeks), "The specified campaign is no more active, the owner should finalize it");
         require(campaigns[_id].weiLimit - campaigns[_id].donatedWei - msg.value >= 0, "The donation value is too high!");
         require(msg.value > 0, "The donation must be greater than zero");
         require(msg.value % 0.0005 ether == 0, "You can donate only using steps of 0.0005 ETH");
