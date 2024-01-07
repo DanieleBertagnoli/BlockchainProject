@@ -10,8 +10,6 @@ import "./DragonBlockOracle.sol";
  */
 contract DragonBlock is UsingOracle 
 {
-    DragonBlockOracle private oracle;
-
     // Enum to represent different statuses of a campaign
     enum CampaignStatus 
     {
@@ -66,6 +64,45 @@ contract DragonBlock is UsingOracle
     mapping (uint256 => Donation[]) private donators; // Mapping to track of donations made to a certain campaign (Key: campaign ID)
 
     address public minter; // Address of the contract creator
+
+    DragonBlockOracle private oracle; // DragonBlockOracle instance
+
+
+    /**
+     * @dev Modifier to check if the caller is a verified user.
+     */
+    modifier isVerified() 
+    {
+        // Check if the caller is a verified user
+        require(verifiedUsers[msg.sender], "You are not a verified user!");
+        _;  // Continue with the function execution if the check passes
+    }
+
+
+
+    /**
+     * @dev Modifier to check if the caller is part of the SuperSaiyan Set.
+     */
+    modifier isSSJ() 
+    {
+        // Check if the caller is part of the SuperSaiyan Set
+        require(ssjVaults[msg.sender] > 0, "You are not a SSJ!");
+        _;  // Continue with the function execution if the check passes
+    }
+
+
+
+    /**
+     * @dev Modifier to check if the caller has not voted on a specific campaign.
+     * @param _id The ID of the campaign for which the caller's vote is being checked.
+     */
+    modifier hasNotVoted(uint256 _id) 
+    {
+        // Check if the caller has not already voted on the campaign
+        require(!addressInArray(msg.sender, campaignApprovals[_id]), "You have already approved this campaign");
+        require(!addressInArray(msg.sender, campaignDisapprovals[_id]), "You have already disapproved this campaign");
+        _;  // Continue with the function execution if the check passes
+    }
 
 
 
@@ -264,7 +301,7 @@ contract DragonBlock is UsingOracle
      * @dev The function performs various validations to ensure the correctness of input parameters and the user's combat level.
      * @dev If all validations pass, a new campaign is created with the specified details, and the campaign ID is emitted through an event.
      */
-    function createCampaign(uint256 _weiLimit, uint16 _weekDuration) public payable 
+    function createCampaign(uint256 _weiLimit, uint16 _weekDuration) isVerified() public payable 
     {
         require(msg.value == _weiLimit * 5 / 100, "You have to deposit 5% of the weiLimit!"); // Require that the sender deposits 5% of the weiLimit
         require(_weiLimit > 0.05 ether, "The donation limit must be greater than 0.05 ETH"); // Require that the donation limit is greater than 0.05 ETH
@@ -366,7 +403,7 @@ contract DragonBlock is UsingOracle
      * @dev The donation must be in increments of 0.0005 ETH.
      * @dev The donated amount is converted to DST based on the conversion rate of 0.0005 ETH to 1 DST.
      */
-    function donateCampaign(uint256 _id) public payable 
+    function donateCampaign(uint256 _id) isVerified() public payable
     {
         require(_id < campaigns.length, "The specified campaign does not exist"); // Check if the specified campaign exists
         require(campaigns[_id].status == CampaignStatus.ACTIVE, "The specified campaign is not active"); // Check if the specified campaign is active
@@ -394,7 +431,7 @@ contract DragonBlock is UsingOracle
      * @dev If all conditions are met, the function deducts 1 DST from the user, records the report, and checks if the campaign needs to enter the revision state.
      * @dev If more than one report is received, the campaign is marked as "REVISION" with the timestamp of the revision state.
      */
-    function reportCampaign(uint256 _id) public 
+    function reportCampaign(uint256 _id) isVerified() public 
     {
         require(_id < campaigns.length, "The specified campaign does not exist"); // Check if the specified campaign exists
         require(campaigns[_id].status == CampaignStatus.ACTIVE, "The specified campaign is not active"); // Check if the specified campaign is active
@@ -420,7 +457,7 @@ contract DragonBlock is UsingOracle
      * @dev The function checks various conditions, such as campaign status, elapsed time, and ownership, before finalizing the campaign.
      * @dev If the campaign has more approvals than disapprovals, it is marked as "ACTIVE." Otherwise, it is marked as "DISAPPROVED."
      */
-    function finalizeCampaign(uint256 _id) public 
+    function finalizeCampaign(uint256 _id) isVerified() public 
     {
         require(campaigns[_id].status == CampaignStatus.PENDING, "The specified campaign is not pending!"); // Check if the specified campaign is in the "PENDING" status
         require(block.timestamp > campaigns[_id].creationTime + 7 days, "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the campaign creation for finalization
@@ -442,7 +479,7 @@ contract DragonBlock is UsingOracle
      * @dev Upon termination, the campaign is marked as "ENDED," SSJ users are rewarded, and the remaining funds are transferred to the campaign owner.
      * @dev Additionally, approval and disapproval lists for revisioned campaigns are cleared to maintain data integrity.
      */
-    function terminateCampaign(uint256 _id) public 
+    function terminateCampaign(uint256 _id) isVerified() public 
     { 
         require(campaigns[_id].status == CampaignStatus.ACTIVE, "The specified campaign is not active!"); // Check if the specified campaign is in the "ACTIVE" status
         require(block.timestamp >= campaigns[_id].creationTime + (campaigns[_id].weekDuration * 7 days), "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the campaign creation for termination
@@ -470,7 +507,7 @@ contract DragonBlock is UsingOracle
      * @dev If disapprovals surpass approvals, the campaign is marked as "BANNED," and associated actions (slashing SSJ users, rewarding reporters, rewarding SSJ users, refunding donators) are performed.
      * @dev Approval and disapproval lists for revisioned campaigns are cleared to maintain data integrity.
      */
-    function finalizeRevisionCampaign(uint256 _id) public 
+    function finalizeRevisionCampaign(uint256 _id) isVerified() public 
     {
         require(campaigns[_id].status == CampaignStatus.REVISION, "The specified campaign is not in revision!"); // Check if the specified campaign is in the "REVISION" status
         require(block.timestamp >= campaigns[_id].revisionTime + (7 days), "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the revision started for finalization
@@ -509,15 +546,10 @@ contract DragonBlock is UsingOracle
      * @dev The function checks various conditions, such as SSJ membership, campaign status, elapsed time, and previous votes, before recording the vote.
      * @dev The function updates the approval or disapproval lists for the specified campaign based on the voter's choice.
      */
-    function voteForCampaign(uint256 _id, bool _approval) public returns (uint256) 
+    function voteForCampaign(uint256 _id, bool _approval) isVerified() isSSJ() hasNotVoted(_id) public returns (uint256) 
     {
-        require(ssjVaults[msg.sender] > 0, "You are not part of the SuperSaiyan Set!"); // Check if the caller is part of the SuperSaiyan Set
         require(campaigns[_id].status == CampaignStatus.PENDING, "The specified campaign is not pending!"); // Check if the specified campaign is in "PENDING" status
         require(block.timestamp < campaigns[_id].creationTime + 7 days, "The campaign is too old, you cannot vote anymore!"); // Check if the current timestamp is within 7 days of the campaign creation
-
-        // Check if the voter has not already voted for the specified campaign
-        require(!addressInArray(msg.sender, campaignApprovals[_id]), "You have already approved this campaign");
-        require(!addressInArray(msg.sender, campaignDisapprovals[_id]), "You have already disapproved this campaign");
 
         // Record the approval or disapproval vote based on the voter's choice
         if (_approval) 
@@ -537,19 +569,14 @@ contract DragonBlock is UsingOracle
      * @dev The function checks various conditions, such as SSJ membership, campaign status, elapsed time, previous votes, and voting history, before recording the vote.
      * @dev The function updates the approval or disapproval lists for the revision of the specified campaign based on the voter's choice.
      */
-    function revisionCampaign(uint256 _id, bool _approval) public 
+    function revisionCampaign(uint256 _id, bool _approval) isVerified() isSSJ() hasNotVoted(_id) public 
     {
-        require(ssjVaults[msg.sender] > 0, "You are not part of the SuperSaiyan Set!"); // Check if the caller is part of the SuperSaiyan Set
         require(campaigns[_id].status == CampaignStatus.REVISION, "The specified campaign is not in revision!"); // Check if the specified campaign is in "REVISION" status
         require(block.timestamp < campaigns[_id].revisionTime + 7 days, "The revision is too old, you cannot vote anymore!"); // Check if the current timestamp is within 7 days of the campaign revision
 
         // Check if the voter has not already voted for the revision of the specified campaign
         require(!addressInArray(msg.sender, campaignRevisionApprovals[_id]), "You have already approved this campaign revision");
         require(!addressInArray(msg.sender, campaignRevisionDisapprovals[_id]), "You have already disapproved this campaign revision");
-
-        // Check if the voter has not voted for the specified campaign while it was pending
-        require(!addressInArray(msg.sender, campaignApprovals[_id]), "You have voted this campaign while it was pending, therefore you cannot vote for the revision");
-        require(!addressInArray(msg.sender, campaignDisapprovals[_id]), "You have voted this campaign while it was pending, therefore you cannot vote for the revision");
 
         // Record the approval or disapproval vote for the revision
         if (_approval) 
@@ -565,7 +592,7 @@ contract DragonBlock is UsingOracle
      * @dev The function checks various conditions, such as current SSJ membership, DST balance, and the required deposit, before adding the caller to the SuperSaiyan Set.
      * @dev Upon successful execution, the function sets the caller's SSJ vault balance to the deposited ETH amount.
      */
-    function becomeSSJ() public payable 
+    function becomeSSJ() isVerified() public payable 
     {
         require(ssjVaults[msg.sender] == 0, "You are already part of the SuperSaiyan Set!"); // Check if the caller is not already part of the SuperSaiyan Set
         require(dstBalances[msg.sender] >= 500, "You must hold at least 500 DST to become part of the SuperSaiyan Set!"); // Check if the caller holds at least 500 DST to become part of the SuperSaiyan Set
@@ -580,10 +607,8 @@ contract DragonBlock is UsingOracle
      * @dev Allows users to transition from the SuperSaiyan Set to become a normal user by withdrawing their deposited ETH.
      * @dev The function checks whether the caller is part of the SuperSaiyan Set, and if so, transfers the deposited ETH back to the caller and sets their SSJ vault balance to zero.
      */
-    function becomeNormalUser() public 
+    function becomeNormalUser() isVerified() isSSJ() public 
     {
-        require(ssjVaults[msg.sender] > 0, "You are not part of the SuperSaiyan Set!"); // Check if the caller is part of the SuperSaiyan Set
-
         // Transfer the deposited ETH back to the caller
         address payable user = payable(msg.sender);
         user.transfer(ssjVaults[msg.sender]);
