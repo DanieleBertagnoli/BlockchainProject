@@ -194,5 +194,21 @@ def get_campaigns():
     # Return the result as JSON
     return jsonify(campaigns)
 
+@app.route('/is-registered', methods=['POST'])
+def is_registered():
+    data = request.get_json()
+    user_ethereum_address = data.get('ethereum_address')
+
+    # Check if the email already exists
+    db_cursor = mysql_connection.cursor(dictionary=True)
+    db_cursor.execute("SELECT * FROM users WHERE ethereum_address = %s", (user_ethereum_address,))
+    existing_user = db_cursor.fetchone()
+    db_cursor.close()
+
+    if existing_user:
+        return jsonify(success=True)
+    
+    return jsonify(success=False)
+
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=80)

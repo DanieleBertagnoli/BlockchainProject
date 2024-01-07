@@ -22,6 +22,7 @@
         <script src="https://cdn.jsdelivr.net/npm/web3@1.6.0/dist/web3.min.js"></script>
 
         <!-- Link to the script -->
+        <script src="{{ url_for('static', filename='JS/index-script.js') }}"></script>
         <script type="module" src="{{ url_for('static', filename='JS/blockchain-integration-script.js') }}"></script>
         <script type="module" src="{{ url_for('static', filename='JS/login-signup-script.js') }}"></script>  
 
@@ -45,17 +46,11 @@
                 </div>
 
                 <div class="right">
-                    <li><a href="/signup-page" onclick="toggleMenu()">Signup</a></li>
-                    <li><a href="/login-page" onclick="toggleMenu()">Login</a></li>
+                    <li><a href="/signup-page">Signup</a></li>
+                    <li><a href="/login-page">Login</a></li>
                 </div>
 
             </ul>
-
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
 
         </div>
 
@@ -69,7 +64,7 @@
                 </div>
             {% endif %}
 
-            <form class="form" action="/login" method="post" onsubmit="return checkForm('login')">
+            <form class="form" action="/login" id="form" method="post" data-form-type="login">
 
                 <h1>LOGIN</h1>
 

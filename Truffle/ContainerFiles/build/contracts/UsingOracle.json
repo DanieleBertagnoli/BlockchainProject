@@ -1,0 +1,146 @@
+{
+  "contractName": "UsingOracle",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_verifiedUser",
+          "type": "address"
+        }
+      ],
+      "name": "_callback",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_verifiedUser\",\"type\":\"address\"}],\"name\":\"_callback\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/UsingOracle.sol\":\"UsingOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/UsingOracle.sol\":{\"keccak256\":\"0xdcd43dca82a0cfb9d311e5bb9677ac072e023365000e9c8bf8bbf6d40c4b7df2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://68576eb1b08b019e0e8faa35bb6daa7806659b6fc7ed9a35356a889904472508\",\"dweb:/ipfs/Qmabj3iNANrsJQCxnZhnxf2d2rTrsnyw3LxSCJXbMo2g1k\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\nabstract contract UsingOracle {\n\n    function _callback(address _verifiedUser) virtual public;\n}",
+  "sourcePath": "/ContainerFiles/contracts/UsingOracle.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/UsingOracle.sol",
+    "exportedSymbols": {
+      "UsingOracle": [
+        1920
+      ]
+    },
+    "id": 1921,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1914,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:3"
+      },
+      {
+        "abstract": true,
+        "baseContracts": [],
+        "canonicalName": "UsingOracle",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": false,
+        "id": 1920,
+        "linearizedBaseContracts": [
+          1920
+        ],
+        "name": "UsingOracle",
+        "nameLocation": "75:11:3",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "5f52fdcd",
+            "id": 1919,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "_callback",
+            "nameLocation": "103:9:3",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1917,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1916,
+                  "mutability": "mutable",
+                  "name": "_verifiedUser",
+                  "nameLocation": "121:13:3",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1919,
+                  "src": "113:21:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1915,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "113:7:3",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "112:23:3"
+            },
+            "returnParameters": {
+              "id": 1918,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "150:0:3"
+            },
+            "scope": 1920,
+            "src": "94:57:3",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "public"
+          }
+        ],
+        "scope": 1921,
+        "src": "57:96:3",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:121:3"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2024-01-06T12:20:45.922Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

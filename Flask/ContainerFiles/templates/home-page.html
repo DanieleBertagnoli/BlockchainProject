@@ -23,6 +23,7 @@
         <script src="https://cdn.jsdelivr.net/npm/web3@1.5.0/dist/web3.min.js"></script>
 
         <!-- Link to the script -->
+        <script src="{{ url_for('static', filename='JS/index-script.js') }}"></script>
         <script type="module" src="{{ url_for('static', filename='JS/blockchain-integration-script.js') }}"></script>
         <script type="module" src="{{ url_for('static', filename='JS/home-script.js') }}"></script>
 
@@ -41,16 +42,10 @@
             
             <ul class="menu">
                 <div class="right">
-                    <li><a href="/profile-page" onclick="toggleMenu()">Profile</a></li>
-                    <li><a href="/logout" onclick="toggleMenu()">Logout</a></li>
+                    <li><a href="/profile-page">Profile</a></li>
+                    <li><a href="/logout">Logout</a></li>
                 </div>
             </ul>
-
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
 
         </div>
 
