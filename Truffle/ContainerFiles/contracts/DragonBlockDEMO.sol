@@ -8,7 +8,7 @@ import "./DragonBlockOracle.sol";
  * @title DragonBlock Smart Contract
  * @dev A decentralized crowdfunding platform where users can create campaigns, donate, and vote using SuperSaiyan (SSJ) tokens.
  */
-contract DragonBlock is UsingOracle 
+contract DragonBlockDEMO is UsingOracle 
 {
     // Enum to represent different statuses of a campaign
     enum CampaignStatus 
@@ -115,7 +115,7 @@ contract DragonBlock is UsingOracle
         minter = msg.sender; // Initialize DST balance for a default address
         dstBalances[msg.sender] = 1000;
         oracle = DragonBlockOracle(_oracleAddress);
-        verifiedUsers[msg.sender] = true;
+        //verifiedUsers[msg.sender] = true;
     }
 
 
@@ -440,8 +440,8 @@ contract DragonBlock is UsingOracle
         dstBalances[msg.sender] -= 1; // Deduct 1 DST from the user's balance for reporting the campaign
         campaignReports[_id].push(msg.sender); // Record the user's report for the campaign
 
-        // Check if more than 100 report has been received
-        if (campaignReports[_id].length > 100) 
+        // Check if more than one report has been received
+        if (campaignReports[_id].length > 1) 
         {
             // If more than 100 report is received, mark the campaign as "REVISION" and record the revision timestamp
             campaigns[_id].status = CampaignStatus.REVISION;
@@ -460,7 +460,7 @@ contract DragonBlock is UsingOracle
     function finalizeCampaign(uint256 _id) isVerified() public 
     {
         require(campaigns[_id].status == CampaignStatus.PENDING, "The specified campaign is not pending!"); // Check if the specified campaign is in the "PENDING" status
-        require(block.timestamp > campaigns[_id].creationTime + 7 days, "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the campaign creation for finalization
+        require(block.timestamp > campaigns[_id].creationTime + 0 days, "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the campaign creation for finalization
         require(msg.sender == campaigns[_id].owner, "You cannot finalize this campaign as you are not the owner!"); // Check if the caller is the owner of the campaign
 
         // Determine the campaign status based on approvals and disapprovals
@@ -482,7 +482,7 @@ contract DragonBlock is UsingOracle
     function terminateCampaign(uint256 _id) isVerified() public 
     { 
         require(campaigns[_id].status == CampaignStatus.ACTIVE, "The specified campaign is not active!"); // Check if the specified campaign is in the "ACTIVE" status
-        require(block.timestamp >= campaigns[_id].creationTime + (campaigns[_id].weekDuration * 7 days), "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the campaign creation for termination
+        require(block.timestamp >= campaigns[_id].creationTime + (campaigns[_id].weekDuration * 0 days), "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the campaign creation for termination
         require(msg.sender == campaigns[_id].owner, "You cannot terminate this campaign as you are not the owner!"); // Check if the caller is the owner of the campaign
 
         campaigns[_id].status = CampaignStatus.ENDED; // Mark the campaign as "ENDED"
@@ -510,7 +510,7 @@ contract DragonBlock is UsingOracle
     function finalizeRevisionCampaign(uint256 _id) isVerified() public 
     {
         require(campaigns[_id].status == CampaignStatus.REVISION, "The specified campaign is not in revision!"); // Check if the specified campaign is in the "REVISION" status
-        require(block.timestamp >= campaigns[_id].revisionTime + (7 days), "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the revision started for finalization
+        require(block.timestamp >= campaigns[_id].revisionTime + (0 days), "You can finalize it after 7 days!"); // Check if at least 7 days have passed since the revision started for finalization
         require(msg.sender == campaigns[_id].owner, "You cannot finalize this campaign as you are not the owner!"); // Check if the caller is the owner of the campaign
 
         // Check the number of approvals and disapprovals for decision-making
