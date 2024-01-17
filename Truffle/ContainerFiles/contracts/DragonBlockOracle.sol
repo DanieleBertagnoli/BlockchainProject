@@ -103,4 +103,13 @@ contract DragonBlockOracle {
             }
         }
     }
+
+    /**
+     * @dev Public function for the contract creator to terminate the contract and withdraw funds
+     */
+    function terminate() public 
+    {
+        require(msg.sender == minter, "You cannot terminate the contract!");
+        payable(minter).transfer(address(this).balance);
+    }
 }

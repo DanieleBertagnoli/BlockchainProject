@@ -1,9 +1,9 @@
 const web3 = new Web3(Web3.givenProvider || "ws://172.17.0.1:7545");
 
-const contractAddress = '0x01F160fB611987EB8ffC9a57FB6494e02F726464'; // Address of the DragonBlock contract
+const contractAddress = '0x05bf2302fCEa80a29FDBA9987aec17646367dAdf'; // Address of the DragonBlock contract
 const contractJSON = '/static/ContractsJSON/DragonBlock.json'; // Path of the contract ABI
 
-const oracleAddress = '0xcfb436C500471E7D4c45c4C4d067104659Ad644E'; // Address of the DragonBlockOracle contract
+const oracleAddress = '0xB8597a95A58ac133daE70BB1370E428b82ACf3E1'; // Address of the DragonBlockOracle contract
 const oracleJSON = '/static/ContractsJSON/DragonBlockOracle.json'; // Path of the contract ABI
 
 
@@ -51,6 +51,8 @@ export async function getContract()
 						data: JSON.stringify({ ethereum_address: userAddress }),
 						dataType: 'json'
 		  			});
+
+					alert("This small transaction is used to verify a user, please authorize it as is a small contribution for you but a huge help for us! Thank you, the team!")
 
 		  			// Process the result and vote on the Oracle contract accordingly
 		  			if (result.success) 
