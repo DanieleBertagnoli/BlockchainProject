@@ -1,9 +1,9 @@
 const web3 = new Web3(Web3.givenProvider || "ws://172.17.0.1:7545");
 
-const contractAddress = '0x05bf2302fCEa80a29FDBA9987aec17646367dAdf'; // Address of the DragonBlock contract
+const contractAddress = '0xd816899C7FB5545AaeDC6C0c2CEb7D6dA1F598CC'; // Address of the DragonBlock contract
 const contractJSON = '/static/ContractsJSON/DragonBlock.json'; // Path of the contract ABI
 
-const oracleAddress = '0xB8597a95A58ac133daE70BB1370E428b82ACf3E1'; // Address of the DragonBlockOracle contract
+const oracleAddress = '0xb69C49Dbdc6DBFC6DCe2923591d337eb06Cc97d1'; // Address of the DragonBlockOracle contract
 const oracleJSON = '/static/ContractsJSON/DragonBlockOracle.json'; // Path of the contract ABI
 
 

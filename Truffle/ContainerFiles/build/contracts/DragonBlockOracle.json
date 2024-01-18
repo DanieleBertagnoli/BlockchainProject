@@ -6866,12 +6866,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xB8597a95A58ac133daE70BB1370E428b82ACf3E1",
-      "transactionHash": "0x615827cea8eccf31e740df637c3462b5eb3496c6518d161a80e842bb44a7712f"
+      "address": "0xb69C49Dbdc6DBFC6DCe2923591d337eb06Cc97d1",
+      "transactionHash": "0x3bc84ca2553b695468c7f5f1d6c2ac8652ca7267f35a7100e981b77c0b19006b"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-01-17T10:25:48.440Z",
+  "updatedAt": "2024-01-18T09:42:21.783Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "An Oracle contract to verify users based on votes from other users.",

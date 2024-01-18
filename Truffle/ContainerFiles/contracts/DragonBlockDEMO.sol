@@ -209,7 +209,7 @@ contract DragonBlockDEMO is UsingOracle
             if (percentage <= 5) 
             { return; }
 
-            uint rewardToSplit = (campaigns[_campaignID].weiLimit * 5 / 100) * (percentage / 100); // Reward to be splitted among the users
+            uint rewardToSplit = campaigns[_campaignID].weiLimit * 5 / 100 * percentage / 100; // Reward to be splitted among the users
 
             for (uint i = 0; i < campaignApprovals[_campaignID].length; i++) // Reward the users who have disapprove the campaign while was pending
             {

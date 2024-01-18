@@ -39,7 +39,7 @@ async function loadContractInfo()
   	await loadCampaignWindow(); // Create the campaigns
 
   	const vault = await contract.methods.ssjVaults(metamaskAccount).call(); // Get the current user's vault
-
+	console.log(vault);
 	if(vault > 0) // If the user is a SSJ (the vault is greater than 0)
 	{ 
 		$('#user-role').text('SSJ, Vault:' + web3.utils.fromWei(vault, 'ether') + ' ETH'); 
