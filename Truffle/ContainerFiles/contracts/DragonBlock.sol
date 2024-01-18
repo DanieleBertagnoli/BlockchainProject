@@ -191,13 +191,13 @@ contract DragonBlock is UsingOracle
             for (uint i = 0; i < campaignDisapprovals[_campaignID].length; i++) // Reward the users who have disapprove the campaign while was pending
             {
                 address rewardedUser = campaignDisapprovals[_campaignID][i];
-                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 4 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
+                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 5 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
             }
 
             for (uint i = 0; i < campaignRevisionDisapprovals[_campaignID].length; i++) // Reward the users who have disapprove the campaign while was in revision
             {
                 address rewardedUser = campaignRevisionDisapprovals[_campaignID][i];
-                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 4 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
+                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 5 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
             }
         }
 
@@ -209,7 +209,7 @@ contract DragonBlock is UsingOracle
             if (percentage <= 5) 
             { return; }
 
-            uint rewardToSplit = (campaigns[_campaignID].weiLimit * 4 / 100) * (percentage / 100); // Reward to be splitted among the users
+            uint rewardToSplit = (campaigns[_campaignID].weiLimit * 5 / 100) * (percentage / 100); // Reward to be splitted among the users
 
             for (uint i = 0; i < campaignApprovals[_campaignID].length; i++) // Reward the users who have disapprove the campaign while was pending
             {
@@ -412,7 +412,7 @@ contract DragonBlock is UsingOracle
         require(msg.value > 0, "The donation must be greater than zero"); // Check if the donation amount is greater than zero
         require(msg.value % 0.0005 ether == 0, "You can donate only using steps of 0.0005 ETH"); // Check if the donation amount is in increments of 0.0005 ETH
 
-        campaigns[_id].donatedWei += msg.value; // Update the campaign's donatedWei field with the received donation
+        campaigns[_id].donatedWei += msg.value * 95 / 100; // Update the campaign's donatedWei field with the received donation (only the 95% is destinated as donation, 5% is kept in the contract for the fees)
         dstBalances[msg.sender] += msg.value / 0.0005 ether; // Convert the donated amount to DST based on the conversion rate of 0.0005 ETH to 1 DST
 
         // Record the donation details, including the donator's address and the donated amount
