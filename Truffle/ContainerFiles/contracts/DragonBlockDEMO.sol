@@ -191,13 +191,13 @@ contract DragonBlockDEMO is UsingOracle
             for (uint i = 0; i < campaignDisapprovals[_campaignID].length; i++) // Reward the users who have disapprove the campaign while was pending
             {
                 address rewardedUser = campaignDisapprovals[_campaignID][i];
-                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 5 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
+                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 4 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
             }
 
             for (uint i = 0; i < campaignRevisionDisapprovals[_campaignID].length; i++) // Reward the users who have disapprove the campaign while was in revision
             {
                 address rewardedUser = campaignRevisionDisapprovals[_campaignID][i];
-                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 5 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
+                ssjVaults[rewardedUser] += (campaigns[_campaignID].weiLimit * 4 / 100) / (campaignDisapprovals[_campaignID].length + campaignRevisionDisapprovals[_campaignID].length);
             }
         }
 
@@ -209,7 +209,7 @@ contract DragonBlockDEMO is UsingOracle
             if (percentage <= 5) 
             { return; }
 
-            uint rewardToSplit = (campaigns[_campaignID].weiLimit * 5 / 100) * (percentage / 100); // Reward to be splitted among the users
+            uint rewardToSplit = (campaigns[_campaignID].weiLimit * 4 / 100) * (percentage / 100); // Reward to be splitted among the users
 
             for (uint i = 0; i < campaignApprovals[_campaignID].length; i++) // Reward the users who have disapprove the campaign while was pending
             {
